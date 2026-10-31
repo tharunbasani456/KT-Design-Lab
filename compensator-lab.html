@@ -4,6 +4,23 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Universal Power Converter Compensator Lab</title>
+<style>body{visibility:hidden}#kt-access-denied{visibility:visible;display:none;position:fixed;inset:0;z-index:99999;background:#e9f3e2;color:#123980;align-items:center;justify-content:center;padding:24px;text-align:center;font:16px system-ui}#kt-access-denied>div{max-width:480px;background:#fff;border:1px solid #c6d8b8;border-radius:14px;padding:28px;box-shadow:0 12px 40px #0002}#kt-access-denied a{color:#007391;font-weight:700}</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./config.js"></script>
+<script>
+(async function(){
+ await new Promise(resolve=>{if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',resolve,{once:true});else resolve();});
+ const deny=(msg)=>{document.body.style.visibility='visible';let el=document.getElementById('kt-access-denied');if(!el){el=document.createElement('div');el.id='kt-access-denied';el.innerHTML='<div><h2>KT Design Lab access</h2><p id="kt-deny-message"></p><a href="./index.html#login">Go to sign in</a></div>';document.body.appendChild(el);}el.querySelector('#kt-deny-message').textContent=msg;el.style.display='flex';};
+ try{
+  const c=window.KT_CONFIG||{};if(!c.SUPABASE_URL||!c.SUPABASE_ANON_KEY||!window.supabase?.createClient)throw new Error('Authentication is not configured.');
+  const client=window.supabase.createClient(c.SUPABASE_URL,c.SUPABASE_ANON_KEY);
+  const {data:{session}}=await client.auth.getSession();if(!session?.user){deny('Please sign in with an approved account to open this tool.');return;}
+  const {data:profile,error}=await client.from('profiles').select('status').eq('id',session.user.id).maybeSingle();
+  if(error||!profile||profile.status!=='approved'){deny('Your account is not approved for tool access. Contact a lab administrator.');return;}
+  document.body.style.visibility='visible';
+ }catch(e){deny(e.message||'Unable to verify your access.');}
+})();
+</script>
+
 <style>
 :root{--bg:#e9f3e2;--panel:#f2f8ee;--panel2:#f9fcf8;--line:#c6d8b8;--text:#123980;--muted:#6f8266;--cyan:#179eae;--blue:#002bad;--green:#18a660;--amber:#b27300;--red:#ac0012}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#e9f3e2,#f2f7ed 55%,#e9f3e2);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial}
