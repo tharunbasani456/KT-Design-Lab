@@ -1,0 +1,2052 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Universal Power Converter Compensator Lab</title>
+<style>
+:root{--bg:#e9f3e2;--panel:#f2f8ee;--panel2:#f9fcf8;--line:#c6d8b8;--text:#123980;--muted:#6f8266;--cyan:#179eae;--blue:#002bad;--green:#18a660;--amber:#b27300;--red:#ac0012}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#e9f3e2,#f2f7ed 55%,#e9f3e2);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial}
+header{padding:24px clamp(16px,3vw,42px) 18px;border-bottom:1px solid var(--line);background:#e9f3e2d9;position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border:1px solid #438eaa;border-radius:12px;display:grid;place-items:center;color:var(--cyan);font-weight:800;font-size:20px;background:#d9e7f2}
+h1{font-size:clamp(20px,2.4vw,30px);margin:0;letter-spacing:-.5px}header p{margin:5px 0 0;color:var(--muted)}
+main{padding:22px clamp(12px,2.4vw,34px) 50px;max-width:1600px;margin:auto}.grid{display:grid;grid-template-columns:345px minmax(0,1fr);gap:18px}.stack{display:grid;gap:16px;align-content:start}.panel{background:linear-gradient(180deg,#f6faf3,#f0f6eb);border:1px solid var(--line);border-radius:15px;padding:17px;min-width:0;box-shadow:0 10px 30px #00000012}.panel h2{font-size:15px;margin:0 0 13px;display:flex;justify-content:space-between;align-items:center}.panel h3{font-size:13px;color:#14418b;margin:15px 0 8px}.tag{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--cyan);background:#d9eaf2;padding:4px 7px;border-radius:5px}
+label{display:block;color:#54624d;font-size:12px;margin:10px 0 5px}input,select,textarea{width:100%;background:#d9e1f2;color:var(--text);border:1px solid #c6d8b8;border-radius:7px;padding:9px 10px;font:inherit;min-width:0}input:focus,select:focus,textarea:focus{outline:1px solid var(--cyan);border-color:var(--cyan)}
+input[readonly]{background:#d9e1f2;color:var(--cyan);border-color:#c6d8b8;cursor:not-allowed;font-weight:600}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}button{cursor:pointer;border:1px solid #c6d8b8;background:#fbfdfa;color:#007391;border-radius:8px;padding:9px 12px;font-weight:650}button.primary{background:linear-gradient(90deg,#d9eef2,#2768b0);border-color:#40c7d7}button:hover{filter:brightness(1.12)}.muted{color:var(--muted)}.small{font-size:11px;color:var(--muted)}.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.kpi{padding:12px;background:#d9e2f2;border:1px solid #c6d8b8;border-radius:10px}.kpi span{display:block;color:var(--muted);font-size:11px}.kpi strong{font-size:20px;display:block;margin-top:4px;font-weight:700}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}.tab{padding:8px 11px;border-radius:8px;background:#f0f7ec;border:1px solid #c6d8b8;color:#154593}.tab.active{color:#007791;border-color:#39a6bd;background:#d9e9f2}.tabcontent{display:none}.tabcontent.active{display:block}.plot{height:290px;width:100%;background:#d9e1f2;border:1px solid #c6d8b8;border-radius:10px;margin:8px 0 16px}.plot.tall{height:350px}.schematic{width:100%;height:auto;background:#d9e1f2;border:1px solid #c6d8b8;border-radius:10px;display:block}.schematic text{fill:#124385;font:12px system-ui,-apple-system,Segoe UI,Roboto,sans-serif}.schematic .wire{stroke:#798d6f;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}.schematic .accent{stroke:#179cae;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}.schematic .comp{stroke:#b27300;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}.schematic .parasitic{stroke:#ac0012;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}.schematic .sw-box{stroke:#c6d8b8;stroke-width:1.3;stroke-dasharray:4 3;fill:#d9e2f2aa}.eq{padding:12px 14px;background:#d9e2f2;border-left:3px solid var(--cyan);border-radius:6px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;overflow:auto;margin:8px 0}.status{padding:10px 12px;border-radius:8px;background:#d9f2ec;border:1px solid #93d1b0;color:#159655}.warn{background:#f2e9d9;border-color:#e2c98f;color:#a76b00}.error{background:#f2d9e7;border-color:#e7a7b6;color:#a00016}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:8px;border-bottom:1px solid #c6d8b8;white-space:nowrap}th{color:#5e6d56;font-weight:600}pre{white-space:pre-wrap;overflow:auto;background:#d9e2f2;border:1px solid #c6d8b8;padding:13px;border-radius:8px;color:#138686;font-size:12px}.checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.check{padding:8px;border-radius:7px;background:#d9e2f2;color:#54624d;font-size:12px}.check b{color:var(--green)}.footer{margin-top:18px;color:#8090aa;font-size:11px}
+/* Vertical Transfer Function Styling */
+.tf-wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:6px 0;font-size:13px}
+.tf-row-grid{display:flex;align-items:center;gap:28px;flex-wrap:wrap;padding:6px 0}
+.tf-lhs{font-weight:700;color:var(--cyan);white-space:nowrap}
+.tf-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle}
+.tf-num{padding:3px 12px 6px;border-bottom:1.5px solid #798d6f;text-align:center;white-space:nowrap;color:#123980}
+.tf-den{padding:6px 12px 3px;text-align:center;white-space:nowrap;color:#123980}
+.tf-meta{margin-top:8px;padding-top:8px;border-top:1px dashed #c6d8b8;font-size:11.5px;color:var(--muted)}
+.coeff-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid #c6d8b8}
+.coeff-item{background:#d9e2f2;padding:5px 9px;border-radius:5px;border:1px solid #c6d8b8;font-size:12px}
+.coeff-item b{color:var(--amber)}
+/* Pop-up Modal Styling */
+.modal-backdrop{position:fixed;inset:0;background:#050914cc;backdrop-filter:blur(6px);display:none;place-items:center;z-index:1000;padding:16px}
+.modal-backdrop.show{display:grid}
+.modal-box{max-width:520px;width:100%;background:linear-gradient(180deg,#fafcf8,#eff6ea);border:1.5px solid var(--amber);border-radius:14px;padding:20px 22px;box-shadow:0 20px 50px #000000b0}
+.modal-box.error-modal{border-color:var(--red)}
+.modal-title{font-size:16px;font-weight:700;margin:0 0 10px;display:flex;align-items:center;gap:9px;color:var(--amber)}
+.modal-box.error-modal .modal-title{color:var(--red)}
+.modal-body{font-size:13.5px;color:#133f85;line-height:1.55;margin-bottom:16px}
+.modal-body ul{margin:8px 0;padding-left:20px}
+.modal-body li{margin:4px 0}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px}
+@media(max-width:1050px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}header{position:relative}}@media(max-width:560px){.row,.row3{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.panel{padding:13px}}
+
+/* ===== v2 overrides: light pistachio theme, larger plots, CCS-style code ===== */
+:root{--bg:#e7f2da;--panel:#f6faef;--panel2:#ffffff;--line:#c6d8b8;--text:#1f2d1c;--muted:#566a50;--cyan:#0a7d8c;--blue:#2d5fb8;--green:#1f7a3d;--amber:#9a5f00;--red:#bf3b3b}
+body{background:linear-gradient(160deg,#e6f3d8,#f1f8e8 55%,#e3f0d4)!important;color:#1f2d1c!important;font-size:14.5px}
+header{background:#eaf5dd!important;border-bottom:1px solid #bcd1ac!important}
+.logo{background:#d4eabd!important;border-color:#8fb872!important;color:#2f6b1f!important}
+.grid{grid-template-columns:410px minmax(0,1fr)!important}
+@media(max-width:1150px){.grid{grid-template-columns:1fr!important}}
+main{max-width:1800px!important}
+.panel{background:#f8fcf3!important;border:1px solid #c6d8b8!important;box-shadow:0 4px 14px rgba(70,110,50,.10)!important}
+input,select,textarea{background:#ffffff!important;color:#1f2d1c!important;border:1px solid #b2c8a2!important}
+input[readonly]{background:#eef6e4!important;color:#0a6f7e!important}
+select{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}
+label{color:#3b4f36!important}
+button{background:#e4f1d6!important;color:#1f3a1a!important;border:1px solid #9cbc86!important}
+button:hover{background:#d5eac1!important;filter:none!important}
+button.primary,button.primary:hover{background:linear-gradient(90deg,#2f8f5a,#2c7fb0)!important;color:#fff!important;border-color:#2a7a55!important}
+.tab{background:#eef6e4!important;color:#2a4126!important;border:1px solid #b8cfa8!important}
+.tab.active{background:#bfe3a2!important;border-color:#5c9a3c!important;color:#16300f!important;font-weight:700}
+.kpi{background:#ffffff!important;border:1px solid #c6d8b8!important}
+.kpi strong{font-size:18px!important;overflow-wrap:anywhere;line-height:1.25}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))!important}
+.plot{height:460px!important;background:#ffffff!important;border:1px solid #bcd1ac!important}
+.plot.tall{height:600px!important}
+.schematic{background:#ffffff!important;border:1px solid #bcd1ac!important}
+.eq{background:#ffffff!important;color:#1f2d1c!important;border-left:4px solid #5c9a3c!important}
+.status{background:#e1f3e3!important;color:#1d5a2c!important;border:1px solid #8fcfa4!important}
+.status.warn{background:#fdf1d4!important;color:#7a4b00!important;border-color:#e2c27a!important}
+.status.error{background:#fbe0e0!important;color:#8e2323!important;border-color:#e3a0a0!important}
+th{background:#eaf4df!important;color:#2b4326!important}td{color:#1f2d1c}
+td,th{border-bottom:1px solid #d3e2c6!important;white-space:normal!important;vertical-align:top}
+.tf-num{border-bottom:1.5px solid #4b6a3f!important;color:#1f2d1c!important}.tf-den{color:#1f2d1c!important}
+.coeff-item{background:#f3f9ec!important;border:1px solid #cddfbf!important}
+.check{background:#eef6e4!important;color:#2c4527!important}
+.small,.muted{color:#566a50!important}
+.footer{color:#6a7d63!important}
+.modal-box{background:#ffffff!important;color:#1f2d1c!important}
+
+.pcard{background:#fff;border:1px solid #bcd1ac;border-radius:10px;margin:12px 0;padding:0}
+.pcard>summary{cursor:pointer;padding:11px 14px;font-weight:700;background:#eaf4df;border-radius:10px;color:#1f3a1a}
+.pcard[open]>summary{border-bottom:1px solid #cddfbf;border-radius:10px 10px 0 0}
+.pcard .pc-body{padding:12px 16px 16px}
+.pcard h4{margin:14px 0 6px;font-size:13px;color:#2b4a24;text-transform:uppercase;letter-spacing:.6px}
+.pcard table{margin:6px 0}.pcard td.n{font-family:Consolas,monospace;white-space:nowrap}
+.pz-ok{color:#1d6b33;font-weight:600}.pz-bad{color:#b33030;font-weight:700}
+.pcard .tf-num,.pcard .tf-den{white-space:normal;overflow-wrap:anywhere}
+/* CCS-style code window */
+.ccsbar{display:flex;align-items:center;gap:10px;background:#ececec;border:1px solid #bdbdbd;border-bottom:none;border-radius:6px 6px 0 0;padding:6px 12px;font:600 13px Segoe UI,Arial,sans-serif;color:#222;margin-top:12px}
+.ccsbar span{background:#fff;border:1px solid #c9c9c9;border-bottom:2px solid #1b6ac9;padding:2px 12px}
+.ccsbar button{margin-left:auto;padding:4px 12px!important;font-size:12px}
+pre#cCode{background:#ffffff!important;color:#000000!important;font:14px/1.85 Consolas,"Courier New",monospace!important;white-space:pre!important;tab-size:4;overflow:auto;max-height:780px;margin:0!important;padding:14px 6px 18px 0!important;border:1px solid #bdbdbd!important;border-radius:0 0 6px 6px!important;counter-reset:ln}
+pre#cCode .cl{display:block;counter-increment:ln;padding-left:.4em;min-height:1.85em}
+pre#cCode .cl::before{content:counter(ln);display:inline-block;width:3.4em;margin-right:1.4em;padding-right:.8em;text-align:right;color:#8c8c8c;background:#f3f3f3;border-right:1px solid #d6d6d6;user-select:none}
+pre#cCode .cm{color:#3f7f5f}
+pre#cCode b.fn{font-weight:700;color:#000}
+</style>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script>
+/* Offline fallback: if the Plotly CDN cannot be loaded, provide a Plotly-compatible SVG renderer (lines, markers, dual y-axes, hover read-out) */
+(function(){if(window.Plotly)return;const reg={};
+const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const SI=v=>{const a=Math.abs(v);if(a===0)return'0';if(a>=1e6)return+(v/1e6).toPrecision(3)+'M';if(a>=1e3)return+(v/1e3).toPrecision(3)+'k';if(a>=1)return String(+v.toPrecision(4));if(a>=1e-2)return String(+v.toPrecision(3));return v.toExponential(0)};
+const nice=(a,b,n)=>{const r=[],m=(b-a)/Math.max(n,2),st=Math.pow(10,Math.floor(Math.log10(m||1))),q=m/st,sp=(q<1.5?1:q<3.5?2:q<7.5?5:10)*st;for(let v=Math.ceil(a/sp-1e-9)*sp;v<=b+1e-9*sp;v+=sp)r.push(+v.toPrecision(10));return r};
+const wrap=(t,n)=>{const o=[];let c='';t.split(' ').forEach(w=>{if((c+' '+w).trim().length>n&&c){o.push(c);c=w}else c=(c+' '+w).trim()});if(c)o.push(c);return o};
+const colr=t=>(t.line&&t.line.color)||(t.marker&&t.marker.color)||'#2d5fb8';
+const axt=a=>a&&a.title&&(a.title.text||a.title)||'';
+const lab=(x,y,t,c,an)=>{const w=String(t).length*7+10,x0=an==='end'?x-w:an==='mid'?x-w/2:x;return `<rect x="${x0}" y="${y-10}" width="${w}" height="20" rx="3" fill="${c}"/><text x="${x0+w/2}" y="${y+4}" text-anchor="middle" fill="#fff" font-size="12">${esc(t)}</text>`};
+function draw(id){const A=reg[id],el=document.getElementById(id);if(!A||!el)return;const W=el.clientWidth;if(!W)return;const H=el.clientHeight||460,tr=A[0],lay=A[1],ink='#1f2d1c';
+const dual=!!(lay.yaxis2&&lay.yaxis2.overlaying),rows=dual?1:((lay.grid&&lay.grid.rows)||1);
+const tl=[];String((lay.title&&(lay.title.text||lay.title))||'').replace(/<br>/gi,'\n').replace(/<[^>]+>/g,'').split('\n').forEach(l=>wrap(l,Math.max(20,Math.floor((W-24)/8.4))).forEach(x=>tl.push(x)));
+const names=[];tr.forEach(t=>{if(t.showlegend!==false&&t.name&&!names.includes(t.name))names.push(t.name)});
+const leg=lay.showlegend!==false&&names.length>0&&(names.length>1||tr.length>1);let lx=0,ly=0;const lpos=[],LW=W-40;
+if(leg)names.forEach(n=>{const w=n.length*6.8+34;if(lx+w>LW&&lx>0){lx=0;ly++}lpos.push([lx,ly]);lx+=w+14});
+const legH=leg?(ly+1)*22+12:0,ml=74,mr=dual?74:24,mt=14+tl.length*21+14,mb=56+legH,gap=rows>1?72:0,ph=(H-mt-mb-gap*(rows-1))/rows,pw=W-ml-mr;
+let s=`<svg width="${W}" height="${H}" font-family="Segoe UI,system-ui,Arial,sans-serif" font-size="12.5" fill="${ink}" style="touch-action:pan-y">`;
+tl.forEach((l,i)=>s+=`<text x="${W/2}" y="${24+i*21}" text-anchor="middle" font-size="15" font-weight="600">${esc(l)}</text>`);
+const geo={ml,pw,panels:[]};
+for(let p=0;p<rows;p++){const xk=p?'xaxis2':'xaxis',XA=lay[xk]||{},xl=XA.type==='log';
+ const yaK=(!dual&&p)?'yaxis2':'yaxis',YA=lay[yaK]||{},yl=YA.type==='log',YB=dual?(lay.yaxis2||{}):null,yl2=YB&&YB.type==='log';
+ const ts=dual?tr:tr.filter(t=>(p?'y2':'y')===(t.yaxis||'y')),tsL=dual?tr.filter(t=>(t.yaxis||'y')==='y'):ts,tsR=dual?tr.filter(t=>t.yaxis==='y2'):[];
+ const top=mt+p*(ph+gap),bot=top+ph,tf=(v,l)=>l?Math.log10(v):v,okv=(v,l)=>Number.isFinite(v)&&(!l||v>0),mk=ts.some(t=>t.mode==='markers');
+ const rng=(tt,l)=>{let a=[];tt.forEach(t=>t.y.forEach(v=>okv(v,l)&&a.push(tf(v,l))));if(!a.length)return[0,1];let lo=Math.min(...a),hi=Math.max(...a);if(lo===hi){lo-=1;hi+=1}const d=(hi-lo)*(mk?.12:.06);return[lo-d,hi+d]};
+ let xs=[];ts.forEach(t=>t.x.forEach(v=>okv(v,xl)&&xs.push(tf(v,xl))));if(!xs.length)xs=[0,1];let xa=Math.min(...xs),xb=Math.max(...xs);if(xa===xb){xa-=1;xb+=1}const pxm=xl?0:(xb-xa)*(mk?.12:.04);xa-=pxm;xb+=pxm;
+ const [ya,yb]=rng(tsL,yl),[ya2,yb2]=dual?rng(tsR,yl2):[0,1];
+ const X=v=>ml+(tf(v,xl)-xa)/(xb-xa)*pw,Y1=v=>bot-(tf(v,yl)-ya)/(yb-ya)*ph,Y2=v=>bot-(tf(v,yl2)-ya2)/(yb2-ya2)*ph;
+ const cL=dual&&tsL[0]?colr(tsL[0]):ink,cR=dual&&tsR[0]?colr(tsR[0]):ink;
+ s+=`<rect x="${ml}" y="${top}" width="${pw}" height="${ph}" fill="#fbfdf8" stroke="#8fa783"/>`;
+ if(xl){const d0=Math.ceil(xa-1e-9),d1=Math.floor(xb+1e-9),ev=Math.max(1,Math.ceil((d1-d0+1)*48/pw));for(let e=Math.floor(xa);e<=Math.ceil(xb);e++){for(let k=1;k<10;k++){const lv=e+Math.log10(k);if(lv<xa||lv>xb)continue;const x=ml+(lv-xa)/(xb-xa)*pw;s+=`<line x1="${x}" x2="${x}" y1="${top}" y2="${bot}" stroke="${k===1?'#d0e0c2':'#e9f1e0'}"/>`;if(k===1&&(e-d0)%ev===0)s+=`<text x="${x}" y="${bot+16}" text-anchor="middle">${SI(Math.pow(10,e))}</text>`}}}
+ else nice(xa,xb,Math.floor(pw/66)).forEach(v=>{const x=ml+(v-xa)/(xb-xa)*pw;s+=`<line x1="${x}" x2="${x}" y1="${top}" y2="${bot}" stroke="#d6e4c9"/><text x="${x}" y="${bot+16}" text-anchor="middle">${SI(v)}</text>`});
+ const yt=(a,b,l)=>l?(()=>{const r=[];for(let e=Math.ceil(a);e<=Math.floor(b);e++)r.push(e);return r})():nice(a,b,Math.floor(ph/40));
+ yt(ya,yb,yl).forEach(v=>{const y=bot-(v-ya)/(yb-ya)*ph;s+=`<line x1="${ml}" x2="${ml+pw}" y1="${y}" y2="${y}" stroke="#d6e4c9"/><text x="${ml-8}" y="${y+4}" text-anchor="end" fill="${cL}">${yl?SI(Math.pow(10,v)):SI(v)}</text>`});
+ if(dual)yt(ya2,yb2,yl2).forEach(v=>{const y=bot-(v-ya2)/(yb2-ya2)*ph;s+=`<line x1="${ml+pw}" x2="${ml+pw+5}" y1="${y}" y2="${y}" stroke="${cR}"/><text x="${ml+pw+9}" y="${y+4}" fill="${cR}">${yl2?SI(Math.pow(10,v)):SI(v)}</text>`});
+ if(!xl&&xa<0&&xb>0){const x=X(0);s+=`<line x1="${x}" x2="${x}" y1="${top}" y2="${bot}" stroke="#7f957a" stroke-width="1.4"/>`}
+ if(!yl&&ya<0&&yb>0){const y=Y1(0);s+=`<line x1="${ml}" x2="${ml+pw}" y1="${y}" y2="${y}" stroke="#7f957a" stroke-width="1.4"/>`}
+ const xt=axt(XA),yt1=axt(YA),yt2=dual?axt(YB):'';
+ if(xt)s+=`<text x="${ml+pw/2}" y="${bot+38}" text-anchor="middle" font-size="13">${esc(xt)}</text>`;
+ if(yt1)s+=`<text transform="translate(16 ${top+ph/2}) rotate(-90)" text-anchor="middle" font-size="13" fill="${cL}">${esc(yt1)}</text>`;
+ if(yt2)s+=`<text transform="translate(${W-14} ${top+ph/2}) rotate(90)" text-anchor="middle" font-size="13" fill="${cR}">${esc(yt2)}</text>`;
+ s+=`<clipPath id="cp${id}${p}"><rect x="${ml-9}" y="${top-9}" width="${pw+18}" height="${ph+18}"/></clipPath><g clip-path="url(#cp${id}${p})">`;
+ ts.forEach(t=>{const c=colr(t),right=dual&&t.yaxis==='y2',Y=right?Y2:Y1,yy=right?yl2:yl;if(t.mode==='markers'){t.x.forEach((xv,i)=>{if(!okv(xv,xl)||!okv(t.y[i],yy))return;const x=X(xv),y=Y(t.y[i]),sy=(t.marker&&t.marker.symbol)||'',r=((t.marker&&t.marker.size)||6)*0.75;
+  s+=sy==='x'?`<path d="M${x-r} ${y-r}L${x+r} ${y+r}M${x-r} ${y+r}L${x+r} ${y-r}" stroke="${c}" fill="none" stroke-width="2.2"/>`:sy==='circle-open'?`<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${c}" stroke-width="2"/>`:sy==='diamond'?`<path d="M${x} ${y-r-1}L${x+r+1} ${y}L${x} ${y+r+1}L${x-r-1} ${y}Z" fill="${c}"/>`:`<circle cx="${x}" cy="${y}" r="${Math.min(r,3)}" fill="${c}" fill-opacity=".8"/>`})}
+  else{let d='',pen=false;t.x.forEach((xv,i)=>{if(!okv(xv,xl)||!okv(t.y[i],yy)){pen=false;return}d+=(pen?'L':'M')+X(xv).toFixed(1)+' '+Y(t.y[i]).toFixed(1);pen=true});s+=`<path d="${d}" fill="none" stroke="${c}" stroke-width="${(t.line&&t.line.width)||2}"/>`}});
+ s+='</g>';geo.panels.push({top,bot,ts,xl,xa,xb,dual,X,Y1,Y2,mk,xt,pw})}
+if(leg)names.forEach((n,i)=>{const t=tr.find(q=>q.name===n),c=colr(t),x=ml+lpos[i][0]+(LW-lpos.reduce((m,q,j)=>Math.max(m,q[0]+names[j].length*6.8+34),0))/2*0,y=H-legH+18+lpos[i][1]*22;
+ s+=(t.mode==='markers'?`<circle cx="${x+8}" cy="${y-4}" r="5" fill="${c}"/>`:`<line x1="${x}" x2="${x+18}" y1="${y-4}" y2="${y-4}" stroke="${c}" stroke-width="3"/>`)+`<text x="${x+24}" y="${y}">${esc(n)}</text>`});
+A.geo=geo;el.innerHTML=s+'<g class="hv" pointer-events="none"></g></svg>';
+const sv=el.firstChild;sv.addEventListener('pointermove',e=>hover(id,e));sv.addEventListener('pointerdown',e=>hover(id,e));sv.addEventListener('pointerleave',()=>{const h=sv.querySelector('.hv');if(h)h.innerHTML=''})}
+function hover(id,e){const A=reg[id],g=A&&A.geo,el=document.getElementById(id);if(!g||!el)return;const sv=el.querySelector('svg'),hv=sv&&sv.querySelector('.hv');if(!hv)return;const r=sv.getBoundingClientRect(),px=e.clientX-r.left,py=e.clientY-r.top;
+ const P=g.panels.find(q=>py>=q.top-4&&py<=q.bot+4);if(!P||px<g.ml||px>g.ml+P.pw){hv.innerHTML='';return}
+ let h='';const tfv=P.xa+(px-g.ml)/P.pw*(P.xb-P.xa);
+ if(P.mk&&P.ts.every(t=>t.mode==='markers')){let best=null,bd=28;P.ts.forEach(t=>t.x.forEach((xv,i)=>{if(!Number.isFinite(xv)||!Number.isFinite(t.y[i]))return;const d=Math.hypot(P.X(xv)-px,P.Y1(t.y[i])-py);if(d<bd){bd=d;best={t,xv,yv:t.y[i]}}}));
+  if(best){const x=P.X(best.xv),y=P.Y1(best.yv),tx=`Re = ${+best.xv.toPrecision(5)}, Im = ${+best.yv.toPrecision(5)} rad/s`;h+=`<circle cx="${x}" cy="${y}" r="9" fill="none" stroke="#222" stroke-width="2"/>`+lab(Math.min(Math.max(x,g.ml+90),g.ml+P.pw-90),Math.max(y-20,P.top+12),tx,'#333','mid')+lab(Math.min(Math.max(x,g.ml+90),g.ml+P.pw-90),Math.max(y-42,P.top-8),best.t.name||'','#666','mid')}hv.innerHTML=h;return}
+ const info=[];let xx0=null,xval=null;
+ P.ts.forEach(t=>{if(t.mode==='markers')return;let bi=-1,bd=1e99;t.x.forEach((v,i)=>{if(P.xl&&!(v>0))return;const d=Math.abs((P.xl?Math.log10(v):v)-tfv);if(d<bd){bd=d;bi=i}});if(bi<0)return;const yv=t.y[bi];if(!Number.isFinite(yv))return;
+  const right=P.dual&&t.yaxis==='y2',xx=P.X(t.x[bi]),yy=right?P.Y2(yv):P.Y1(yv),c=colr(t),unit=(String(t.name||'').match(/\(([^)]+)\)\s*$/)||[])[1]||'',vtxt=(+yv.toFixed(3))+(unit?' '+unit:'');
+  if(xx0===null){xx0=xx;xval=t.x[bi]}
+  h+=`<line x1="${right?xx:g.ml}" x2="${right?g.ml+P.pw:xx}" y1="${yy}" y2="${yy}" stroke="${c}" stroke-dasharray="4 3"/><circle cx="${xx}" cy="${yy}" r="5" fill="${c}" stroke="#fff" stroke-width="1.5"/>`+(right?lab(g.ml+P.pw+2,yy,vtxt,c,'start'):lab(g.ml-2,yy,vtxt,c,'end'));
+  info.push([c,(t.name||'').replace(/\s*\([^)]*\)\s*$/,'')+' = '+vtxt])});
+ if(xx0!==null){const xun=((String(((id&&P.xt)||'')).match(/\(([^)]+)\)/)||[])[1])||'';h=`<line x1="${xx0}" x2="${xx0}" y1="${P.top}" y2="${P.bot}" stroke="#555" stroke-dasharray="3 3"/>`+h+lab(xx0,P.bot+14,(+xval.toPrecision(5))+(xun?' '+xun:''),'#333','mid');
+  const bw=Math.max(...info.map(i=>i[1].length))*7+16,bx=px>g.ml+P.pw/2?g.ml+8:g.ml+P.pw-bw-8;h+=`<rect x="${bx}" y="${P.top+6}" width="${bw}" height="${info.length*18+8}" rx="4" fill="#fff" fill-opacity=".92" stroke="#8fa783"/>`+info.map((i,k)=>`<text x="${bx+8}" y="${P.top+24+k*18}" fill="${i[0]}" font-weight="600">${esc(i[1])}</text>`).join('')}
+ hv.innerHTML=h}
+window.Plotly={newPlot(id,tr,lay){reg[id]=[tr,lay||{}];draw(id);return Promise.resolve()},react(id,tr,lay){return this.newPlot(id,tr,lay)},purge(id){delete reg[id]},_offline:true};
+window.addEventListener('resize',()=>Object.keys(reg).forEach(draw));})();
+</script>
+<script>
+(function(){if(!window.Plotly)return;const o=Plotly.newPlot.bind(Plotly),ink='#1f2d1c',grid='#d6e4c9',axc='#8fa783';
+Plotly.newPlot=function(id,tr,lay,cfg){lay=lay||{};
+lay.paper_bgcolor='#ffffff';lay.plot_bgcolor='#fbfdf8';lay.font=Object.assign({},lay.font,{color:ink,size:13,family:'Segoe UI,system-ui,Arial,sans-serif'});
+let t=lay.title;if(typeof t==='string')t={text:t};t=Object.assign({},t||{});let tx=t.text||'';if(tx.length>78){const k=tx.indexOf(' ',70);if(k>0)tx=tx.slice(0,k)+'<br>'+tx.slice(k+1)}
+t.text=tx;t.font={color:ink,size:15};t.x=0.5;t.xanchor='center';t.y=0.985;t.yanchor='top';lay.title=t;
+const legendOn=lay.showlegend!==false&&tr.length>1&&!(lay.grid&&lay.showlegend===undefined);
+lay.margin={l:84,r:(lay.yaxis2&&lay.yaxis2.overlaying)?84:34,t:tx.indexOf('<br>')>0?96:74,b:legendOn?(lay.grid?150:120):72};
+if(lay.grid){lay.grid=Object.assign({ygap:0.24},lay.grid)}
+if(legendOn){lay.showlegend=true;lay.legend=Object.assign({orientation:'h',x:0.5,xanchor:'center',y:lay.grid?-0.2:-0.24,yanchor:'top',font:{size:12.5},bgcolor:'rgba(255,255,255,0)'},lay.legend||{})}else lay.showlegend=false;
+Object.keys(lay).forEach(k=>{if(/^(x|y)axis\d*$/.test(k)){const a=lay[k]=Object.assign({},lay[k]);a.automargin=true;a.gridcolor=grid;a.zerolinecolor='#a6bb98';a.linecolor=axc;a.showline=true;a.mirror=true;a.ticks='outside';
+let ti=a.title;if(typeof ti==='string')ti={text:ti};if(ti){ti=Object.assign({},ti);ti.font=Object.assign({size:13,color:ink},ti.font||{});ti.standoff=12;a.title=ti}}});
+if(!lay.xaxis)lay.xaxis={automargin:true};
+if(!lay.hovermode)lay.hovermode=tr.every(t=>t.mode==='markers')?'closest':'x unified';
+cfg=Object.assign({responsive:true,displaylogo:false,scrollZoom:false},cfg||{});
+return o(id,tr,lay,cfg)}})();
+</script>
+</head>
+<body>
+<header><div class="brand"><div class="logo">Σ</div><div><h1>Universal Power Converter · Compensator Lab</h1><p>Model (with Rl &amp; Rc parasitics) → design → Analog Op-Amp &amp; Multi-Mode Pointer-Driven Embedded C</p></div></div></header>
+
+<!-- Pop-up Modal for Unattainable Phase Margin / Unstable Crossover -->
+<div id="pmModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="pmModalTitle">
+  <div id="pmModalBox" class="modal-box">
+    <h3 id="pmModalTitle" class="modal-title">⚠️ Phase Margin Notice</h3>
+    <div id="pmModalBody" class="modal-body"></div>
+    <div class="modal-actions">
+      <button class="primary" id="pmModalClose">Acknowledge &amp; Continue</button>
+    </div>
+  </div>
+</div>
+
+<main>
+<div class="grid">
+<aside class="stack">
+<section class="panel">
+<h2>01 · Converter setup <span class="tag">CCM + Parasitics</span></h2>
+<label>Topology</label><select id="topology"><option value="buck">Buck converter</option><option value="boost" selected>Boost converter</option><option value="bb">Inverting buck-boost</option></select>
+<div class="row"><div><label>Vin / Vg (V)</label><input id="vin" type="number" value="48" step="1"></div><div><label>Vout magnitude (V)</label><input id="vout" type="number" value="96" step="1"></div></div>
+<div class="row"><div><label>Output power P (W)</label><input id="power" type="number" value="300" step="10"></div><div><label>Load R = Vo²/P (Ω) [Auto]</label><input id="load" type="number" value="30.72" readonly title="Automatically calculated as Vout² / P"></div></div>
+<div class="row"><div><label>Input current Iin (A) [Auto]</label><input id="iin" type="number" value="6.25" readonly title="Automatically calculated as P / Vin"></div><div><label>Output current Io (A) [Auto]</label><input id="iout" type="number" value="3.125" readonly title="Automatically calculated as P / Vout"></div></div>
+<div class="row"><div><label>Inductance L (µH)</label><input id="ind" type="number" value="220" step="10"></div><div><label>Capacitance C (µF)</label><input id="cap" type="number" value="470" step="10"></div></div>
+<div class="row"><div><label>Inductor ESR Rl / DCR (mΩ)</label><input id="dcr" type="number" value="50" step="5"></div><div><label>Capacitor ESR Rc (mΩ)</label><input id="esr" type="number" value="30" step="5"></div></div>
+<div class="row"><div><label>Switching frequency (kHz)</label><input id="fsw" type="number" value="50" step="1"></div><div><label>Sampling frequency (kHz)</label><input id="fs" type="number" value="50" step="1"></div></div>
+<div class="row"><div><label>PWM Ramp Peak Vp (V)</label><input id="vramp" type="number" value="1.0" step="0.1" min="0.1"></div><div><label>Duty min / max</label><div class="row"><input id="dmin" type="number" value=".02" step=".01" aria-label="Duty minimum"><input id="dmax" type="number" value=".95" step=".01" aria-label="Duty maximum"></div></div></div>
+<div class="small">Inductor ESR (R<sub>l</sub>) and Capacitor ESR (R<sub>c</sub>) are actively included in the state-space averaged matrices A<sub>1</sub>, A<sub>2</sub>, q<sub>1</sub>, q<sub>2</sub>.</div>
+<div class="btnrow"><button class="primary" id="recalc">Recalculate model</button><button id="reset">Reset example</button></div>
+</section>
+<section class="panel">
+<h2>02 · Control architecture</h2>
+<label>Architecture</label>
+<select id="arch">
+  <option value="vmode">Only voltage-mode control (Direct VMC)</option>
+  <option value="acmc">Only average current-mode control (ACMC)</option>
+  <option value="cascade">Cascaded outer voltage + inner current control</option>
+</select>
+<label>Plant used for design</label>
+<select id="plant"></select>
+<div class="small" id="plantHint">Control plant: output-voltage perturbation divided by duty perturbation, with input voltage and load perturbation held at zero.</div>
+<label>Compensator</label><select id="ctype"><option value="pi">PI</option><option value="type2">Type-II (integrator + zero + HF pole)</option><option value="type3" selected>Type-III (integrator + 2 zeros + 2 poles)</option><option value="lead">Lead</option><option value="lag">Lag</option><option value="p">Proportional</option><option value="pid">PID (ideal form with HF pole)</option></select>
+<label>Design method</label><select id="method"><option value="bode">Bode target / exact PM &amp; gain synthesis</option><option value="manual">Manual coefficients / pole-zero frequencies</option><option value="root">Root-locus workspace (analysis-only)</option><option value="auto">Constrained auto search (crossover &amp; PM synthesis)</option></select>
+<div class="row"><div><label>Target crossover (Hz)</label><input id="fc" type="number" value="800" step="50"></div><div><label>Target phase margin (°)</label><input id="pm" type="number" value="60" step="5"></div></div>
+<div class="small" id="pmRangeHint" style="margin-top:4px;color:var(--cyan)">Achievable PM range at crossover: calculating...</div>
+<div class="row"><div><label>Zero frequency 1 (Hz)</label><input id="fz1" type="number" value="250" step="25"></div><div><label>Zero frequency 2 (Hz)</label><input id="fz2" type="number" value="350" step="25"></div></div>
+<div class="row"><div><label>HF pole 1 (Hz)</label><input id="fp1" type="number" value="5000" step="100"></div><div><label>HF pole 2 (Hz)</label><input id="fp2" type="number" value="8000" step="100"></div></div>
+<div class="row"><div><label>Low-frequency gain K</label><input id="gain" type="number" value="1" step=".1"></div><div><label>Sensor gain H (V/V or V/A)</label><input id="sense" type="number" value="1" step=".1"></div></div>
+<label>Loop delay in design</label><select id="dly"><option value="on" selected>Include ZOH + computation delay</option><option value="off">Ignore delay</option></select>
+<div id="ibwBox" style="display:none"><div id="innerStatus" class="small" style="margin:6px 0"></div><div id="ibwRow"><label>Inner current-loop BW (Hz) — only used until an ACMC current compensator is designed</label><input id="ibw" type="number" value="4000" step="100" min="10"></div></div>
+<div class="btnrow"><button class="primary" id="design">Calculate compensator</button><button id="exportJson">Export project JSON</button><button id="save">Save in browser</button><button id="loadSaved">Load saved</button></div>
+</section>
+<section class="panel">
+<h2>03 · Sampling & target MCU</h2>
+<div class="row"><div><label>Discretization</label><select id="disc"><option value="tustin">Tustin / bilinear</option><option value="prewarp">Tustin with prewarp</option><option value="backward">Backward Euler</option><option value="forward">Forward Euler (caution)</option></select></div><div><label>Target</label><select id="mcu"><option>TMS320F28375S</option><option>Generic floating-point C</option></select></div></div>
+<div class="row"><div><label>Prewarp frequency (Hz)</label><input id="prewarp" type="number" value="800" step="50"></div><div><label>Extra delay (samples)</label><input id="delay" type="number" value="1" step="1" min="0" max="5"></div></div>
+<div class="small">The delay setting is used in the engineering warning and phase estimate.</div>
+<div class="btnrow"><button class="primary" id="discretize">Discretize controller</button><button id="generateC">Generate C source</button></div>
+</section>
+</aside>
+<div class="stack">
+<section class="panel">
+<h2>Operating point & validation <span class="tag" id="modelTag">calculated model</span></h2>
+<div class="kpis">
+<div class="kpi"><span>Duty ratio D (non-ideal)</span><strong id="kDuty">—</strong></div><div class="kpi"><span>Inductor average current</span><strong id="kIL">—</strong></div><div class="kpi"><span>LC natural frequency f0</span><strong id="kF0">—</strong></div><div class="kpi"><span>RHP zero / ESR zero</span><strong id="kRhp">—</strong></div>
+</div>
+<div style="height:10px"></div><div id="validation" class="status">Enter parameters and recalculate.</div>
+<div class="tabs" style="margin-top:16px">
+  <button class="tab active" data-tab="circuit">Power circuit</button>
+  <button class="tab" data-tab="plants">Plant library</button>
+  <button class="tab" data-tab="design">Compensator</button>
+  <button class="tab" data-tab="analog">Analog Hardware (Op-Amp)</button>
+  <button class="tab" data-tab="digital">Discrete-time &amp; C</button>
+  <button class="tab" data-tab="report">Report &amp; references</button>
+</div>
+
+<div id="tab-circuit" class="tabcontent active">
+<svg id="schematic" class="schematic" viewBox="0 0 860 350" role="img" aria-label="Power Converter Schematic"></svg>
+<div class="eq" id="opEq">Operating point equations will appear here.</div>
+<div class="row" style="margin-top:12px">
+  <div class="eq" id="stateMatricesEq" style="margin:0;font-size:11.5px">State-space matrices will appear here.</div>
+  <div class="eq" style="margin:0;font-size:11.5px">
+    <b style="color:var(--cyan)">Small-Signal Modeling &amp; Loop Design Guidelines:</b><br>
+    • <b>Capacitor ESR Zero:</b> ω<sub>esr</sub> = 1/(C·R<sub>c</sub>) introduces +90° phase lead at high frequency.<br>
+    • <b>Inductor ESR R<sub>l</sub> &amp; Cap ESR R<sub>c</sub>:</b> Increases damping (lowers Q) of the LC complex pole pair.<br>
+    • <b>RHP Zero (Boost / Buck-Boost):</b> Limits closed-loop bandwidth f<sub>c</sub> &lt; f<sub>RHP</sub> / 5.<br>
+    • <b>Phase Margin vs. Peak Overshoot:</b> PM = 45° → 16% overshoot | PM = 60° → 4.6% overshoot (optimal) | PM = 30° → 37% overshoot.
+  </div>
+</div>
+</div>
+
+<div id="tab-plants" class="tabcontent">
+<div class="row"><div><h3>Selected plant equation</h3><div class="eq" id="plantEq">—</div><div id="plantMeta" class="small"></div></div><div><h3>Model assumptions</h3><div class="eq">State-space averaged CCM · includes Inductor ESR (R<sub>l</sub>) &amp; Capacitor ESR (R<sub>c</sub>) · resistive load R = V<sub>o</sub>²/P</div><div class="small">Architecture dropdown automatically filters the available plants. In Cascaded mode with Gvi(s) = Vout/IL, the inner current loop is modelled as Ti(s) = ωci/(s+ωci) using the “Inner current-loop BW” input.</div></div></div>
+<div class="plot" id="plantBode"></div><div class="plot" id="plantPole"></div>
+<h3>Plant margins (unity feedback, uncompensated)</h3><div class="tablewrap" id="plantMargins"></div>
+<div class="plot tall" id="plantRL" style="display:none"></div>
+<div id="plantCards"></div>
+<div class="tablewrap"><table><thead><tr><th>Plant</th><th>Definition</th><th>Numerator coefficients (descending s)</th><th>Denominator coefficients</th></tr></thead><tbody id="plantTable"></tbody></table></div>
+</div>
+
+<div id="tab-design" class="tabcontent">
+<div class="kpis"><div class="kpi"><span>Calculated crossover</span><strong id="kFc">—</strong></div><div class="kpi"><span>Phase margin</span><strong id="kPm">—</strong></div><div class="kpi"><span>Gain margin</span><strong id="kGm">—</strong></div><div class="kpi"><span>Est. step overshoot</span><strong id="kLoop">—</strong></div></div>
+<div class="plot tall" id="loopBode"></div>
+<div class="plot tall" id="cmpPlot"></div>
+<div class="plot tall" id="closedPlot"></div>
+<div class="status" id="polesBox">Calculate a compensator to see closed-loop poles and checks.</div>
+<div class="plot tall" id="rlPlot" style="display:none"></div>
+<div class="eq" id="compEq">Calculate a compensator to view the transfer function.</div>
+<div id="designWarn" class="status warn">Calculate a compensator to verify phase and gain margins.</div>
+</div>
+
+<div id="tab-analog" class="tabcontent">
+<div class="row" style="align-items:end;margin-bottom:10px">
+  <div>
+    <h3 style="margin:0 0 4px">Analog Op-Amp Hardware Realization</h3>
+    <div class="small">Inverting Error Amplifier + Reference Voltage Source V<sub>ref</sub> + PWM Ramp Comparator (Modulator gain G<sub>m</sub> = 1/V<sub>p</sub>).</div>
+  </div>
+  <div class="row" style="gap:8px">
+    <div><label style="margin:0 0 3px">Input Resistor R1 (kΩ)</label><input id="opR1" type="number" value="10" step="1" min="0.5"></div>
+    <div><label style="margin:0 0 3px">Reference Vref (V)</label><input id="opVref" type="number" value="2.5" step="0.1" min="0.5"></div>
+  </div>
+</div>
+<svg id="analogSchematic" class="schematic" viewBox="0 0 880 390" role="img" aria-label="Analog Op-Amp Compensator Schematic"></svg>
+<div class="eq" id="analogTfEq">Calculate a compensator to synthesize the analog Op-Amp circuit.</div>
+<div class="tablewrap" style="margin-top:10px">
+  <table>
+    <thead><tr><th>Component</th><th>Role in Compensator</th><th>Exact Calculated Value</th><th>Standard E96 / E24 Value</th><th>Design Formula</th></tr></thead>
+    <tbody id="analogBomTable"></tbody>
+  </table>
+</div>
+</div>
+
+<div id="tab-digital" class="tabcontent">
+<div class="row"><div><h3>Continuous controller Gc(s)</h3><div class="eq" id="contCoeff">—</div></div><div><h3>Discrete controller Gc(z) &amp; Difference Equation</h3><div class="eq" id="discCoeff">Click “Discretize controller”.</div></div></div>
+<div class="plot tall" id="discPlot"></div><div class="plot tall" id="discLoopPlot"></div><div class="eq" id="digitalWarn">Discrete stability must be evaluated with the sampled plant, ZOH, actual PWM update timing and delays.</div>
+<div class="ccsbar"><span>compensator_generated.c</span><button id="copyC">Copy code</button></div>
+<pre id="cCode">Generate C source after calculating and discretizing a controller.</pre>
+</div>
+
+<div id="tab-report" class="tabcontent">
+<h3>Design provenance and modeling checklist</h3>
+<div class="checklist">
+  <div class="check"><b>✓</b> Non-ideal CCM state-space matrices with R<sub>l</sub> (DCR) and R<sub>c</sub> (ESR)</div>
+  <div class="check"><b>✓</b> Architecture-based plant filtering (VMC, ACMC, and Cascaded Voltage+Current)</div>
+  <div class="check"><b>✓</b> Cascaded Vout/IL closed-loop response models the inner current loop as Ti(s)=ωci/(s+ωci) and includes ZOH + computation delay to evaluate Vout/Vref</div>
+  <div class="check"><b>✓</b> Op-Amp hardware realization with E96/E24 component sizing and vertical Z<sub>f</sub>(s)/Z<sub>in</sub>(s) transfer functions</div>
+  <div class="check"><b>✓</b> Phase Margin to transient overshoot mapping</div>
+  <div class="check"><b>✓</b> Selected-compensator pointer-driven C engine shared across 4 loops (Buck V/I &amp; Boost V/I)</div>
+</div>
+<h3>Reference library supplied for this project</h3>
+<ul class="muted">
+<li><i>Switched Mode Power Conversion</i>, Dept. of Electrical Engineering, IISc Bangalore: Steady-State &amp; Non-Idealities, State-Space Averaging with R<sub>l</sub> &amp; R<sub>c</sub>, Closed-Loop Control, Op-Amp Realisation, and Current Programmed Control.</li>
+<li>TI, <i>Practical Feedback Loop Analysis for Voltage-Mode Boost Converter</i>, SLVA633 (2014).</li>
+<li>Cao, <i>Type III Compensator Design for Power Converters</i>.</li>
+</ul>
+<h3>Exportable report</h3><textarea id="reportText" rows="7" readonly></textarea><div class="btnrow"><button id="downloadReport">Download report (.txt)</button><button id="downloadCsv">Export Bode CSV</button></div>
+</div>
+</section>
+<section class="panel">
+<h2>Engineering limits — read before using results</h2>
+<div class="status warn">This platform implements small-signal state-space averaged CCM models including inductor ESR (R<sub>l</sub>) and capacitor ESR (R<sub>c</sub>), K-factor exact phase-margin synthesis, analog Op-Amp circuit synthesis, and pointer-driven 4-loop C-code generation for the selected compensator structure. Always verify switching ripple stability, slope compensation (if peak current mode), op-amp gain-bandwidth product (GBWP &gt; 20× f<sub>p2</sub>), and hardware protections before powering prototypes.</div>
+</section>
+</div>
+</div>
+<div class="footer">Local browser application · Plots use Plotly from CDN when online (interactive); otherwise a built-in offline renderer is used automatically.</div>
+</main>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+/* ===================== v2 extras ===================== */
+const v2cdv=(a,b)=>{const m=b.re*b.re+b.im*b.im;return{re:(a.re*b.re+a.im*b.im)/m,im:(a.im*b.re-a.re*b.im)/m}};
+const v2cmul=(a,b)=>({re:a.re*b.re-a.im*b.im,im:a.re*b.im+a.im*b.re});
+function v2pz(p,z){let r=0,i=0;for(const k of p){const t=r*z.re-i*z.im+k;i=r*z.im+i*z.re;r=t}return{re:r,im:i}}
+function v2padd(a,b){const n=Math.max(a.length,b.length),r=Array(n).fill(0);a.forEach((x,i)=>r[n-a.length+i]+=x);b.forEach((x,i)=>r[n-b.length+i]+=x);return r}
+function v2roots(p){let a=p.slice();while(a.length>1&&a[0]===0)a.shift();const z0=[];while(a.length>1&&a[a.length-1]===0){z0.push({re:0,im:0});a.pop()}
+ const n=a.length-1;if(n<1)return z0;const w=Math.pow(Math.abs(a[n]/a[0]),1/n),b=a.map((k,i)=>k/a[0]/Math.pow(w,i)),r=[];
+ for(let k=0;k<n;k++){const t=2*Math.PI*k/n+0.7,m=1+0.1*k;r.push({re:m*Math.cos(t),im:m*Math.sin(t)})}
+ for(let it=0;it<3000;it++){let mx=0;for(let i=0;i<n;i++){let d={re:1,im:0};for(let j=0;j<n;j++)if(j!==i)d=v2cmul(d,{re:r[i].re-r[j].re,im:r[i].im-r[j].im});const dl=v2cdv(v2pz(b,r[i]),d);r[i]={re:r[i].re-dl.re,im:r[i].im-dl.im};mx=Math.max(mx,Math.hypot(dl.re,dl.im))}if(mx<1e-13)break}
+ return z0.concat(r.map(q=>({re:q.re*w,im:Math.abs(q.im)<1e-9*Math.abs(q.re)?0:q.im*w})))}
+/* loop dynamics added to the design plant: inner current loop Ti(s) (cascade outer) + ZOH/computation delay (Pade 1/1) */
+function v2innerBW(){return state.inner&&state.inner.fc?state.inner.fc:num("ibw")}
+function v2Ti(){const I=state.inner,m=state.selected;if(!I||!m||!m.models||!m.models.id)return null;const fs=num("fs")*1000;
+ let Li=tfMul(m.models.id,I.tf);Li={num:Li.num.map(x=>x*I.H),den:Li.den};
+ if($("dly").value!=="off"&&fs>0){const Td=(0.5+Math.max(0,num("delay")||0))/fs;Li=tfMul(Li,{num:[-Td/2,1],den:[Td/2,1]})}
+ return normalize({num:Li.num,den:v2padd(Li.den,Li.num)})}
+function v2dyn(plant,isOuter){let p=plant;const fs=num("fs")*1000;
+ if(isOuter){const Ti=v2Ti();if(Ti)p=normalize(tfMul(p,Ti));else{const wi=2*Math.PI*Math.max(1,num("ibw")||1);p=normalize(tfMul(p,{num:[wi],den:[1,wi]}))}}
+ if(($("dly")||{}).value!=="off"&&fs>0){const Td=(0.5+Math.max(0,num("delay")||0))/fs;p=normalize(tfMul(p,{num:[-Td/2,1],den:[Td/2,1]}))}
+ return p}
+function v2locus(id,tf,wc,title){const kk=[];for(let k=-30;k<=30;k++)kk.push(Math.pow(10,k/15));const lim=40*wc,X=[],Y=[];
+ kk.forEach(g=>v2roots(v2padd(tf.den,tf.num.map(x=>x*g))).forEach(z=>{if(Math.hypot(z.re,z.im)<=lim){X.push(z.re);Y.push(z.im)}}));
+ const keep=a=>a.filter(z=>Math.hypot(z.re,z.im)<=lim),cl=v2roots(v2padd(tf.den,tf.num)),op=v2roots(tf.den),zz=v2roots(tf.num);
+ Plotly.newPlot(id,[{x:X,y:Y,mode:'markers',type:'scatter',name:'Root locus (gain 0.01× … 100×)',marker:{size:3,color:'#86ab6a'}},
+  {x:keep(op).map(z=>z.re),y:keep(op).map(z=>z.im),mode:'markers',type:'scatter',name:'Open-loop poles',marker:{size:11,color:'#2d5fb8',symbol:'x'}},
+  {x:keep(zz).map(z=>z.re),y:keep(zz).map(z=>z.im),mode:'markers',type:'scatter',name:'Open-loop zeros',marker:{size:10,color:'#1f8f6a',symbol:'circle-open'}},
+  {x:keep(cl).map(z=>z.re),y:keep(cl).map(z=>z.im),mode:'markers',type:'scatter',name:'Closed-loop poles at present gain',marker:{size:12,color:'#c0392b',symbol:'diamond'}}],
+  {title:{text:title+' (poles beyond 40·ωc not shown)'},xaxis:{title:'Real (rad/s)'},yaxis:{title:'Imaginary (rad/s)'}});
+ return cl}
+function v2design(){const S=state.comp;if(!S)return;const wc=2*Math.PI*S.fc,fs=num("fs")*1000,m=state.selected;
+ const bp=bodeData(S.plant),bc=bodeData(S.tf),bl=bodeData(S.loop),T=[];
+ [['Plant (with delay / inner loop), uncompensated',bp,'#6f7f68'],['Compensator only',bc,'#1f8f6a'],['Compensated loop L(s)',bl,'#c0392b']].forEach(([n,b,col])=>{
+  T.push({x:b.f,y:b.mag,name:n,legendgroup:n,xaxis:'x',yaxis:'y',type:'scatter',mode:'lines',line:{color:col,width:2.6}});
+  T.push({x:b.f,y:b.ph,name:n,legendgroup:n,showlegend:false,xaxis:'x2',yaxis:'y2',type:'scatter',mode:'lines',line:{color:col,width:2.6}})});
+ Plotly.newPlot('cmpPlot',T,{title:{text:'Uncompensated plant vs compensator only vs compensated loop'},showlegend:true,grid:{rows:2,columns:1,pattern:'independent'},xaxis:{type:'log',title:'Frequency (Hz)'},xaxis2:{type:'log',title:'Frequency (Hz)'},yaxis:{title:'Magnitude (dB)'},yaxis2:{title:'Phase (deg)'}});
+ const isRoot=$('method').value==='root';const cl=isRoot?v2locus('rlPlot',S.loop,wc,'Root locus of loop L(s); red ◆ = closed-loop poles at designed gain'):v2roots(v2padd(S.loop.den,S.loop.num));
+ const uns=cl.filter(z=>z.re>1e-9*Math.hypot(z.re,z.im)),notes=[],cr=S.chosenCross,gm=S.chosenGm,mg=S.margins;
+ if(!cr)notes.push('No gain crossover found.');else{
+  if(cr.pm<45)notes.push(`Phase margin ${fmt(cr.pm,1)}° is below 45° (AN-1162 / SMPC guideline).`);
+  if(gm&&gm.gmDb<6)notes.push(`Gain margin ${fmt(gm.gmDb,1)} dB is below 6 dB.`);
+  if(cr.fc>fs/10)notes.push(`Crossover ${fmt(cr.fc,0)} Hz exceeds Fs/10 = ${fmt(fs/10,0)} Hz: sampling delay dominates.`);
+  if(Number.isFinite(m.rhp)&&cr.fc>m.rhp/5)notes.push(`Crossover exceeds RHP-zero/5 = ${fmt(m.rhp/5,0)} Hz (TI SLVA633 rule).`);
+  if(S.isCascadedOuter&&cr.fc*5>v2innerBW())notes.push(`Outer crossover should be ≤ inner-loop crossover/5 = ${fmt(v2innerBW()/5,0)} Hz.`);
+  if(cr.fc<2*m.f0)notes.push(`Crossover is below 2×f0 (${fmt(2*m.f0,0)} Hz) — weak LC-resonance attenuation (TI rule).`)}
+ if(mg.gainCrossings.length>1)notes.push('Multiple gain crossovers at '+mg.gainCrossings.map(c=>fmt(c.fc,0)+' Hz').join(', ')+' — conditional stability possible.');
+ cl.sort((a,b)=>Math.hypot(a.re,a.im)-Math.hypot(b.re,b.im));
+ const list=cl.slice(0,8).map(z=>`${fmt(z.re,1)}${z.im?(z.im>0?' + ':' − ')+fmt(Math.abs(z.im),1)+'j':''} rad/s (|s|/2π = ${fmt(Math.hypot(z.re,z.im)/2/Math.PI,1)} Hz, ζ = ${fmt(-z.re/Math.hypot(z.re,z.im),2)})`).join('<br>');
+ $('polesBox').className='status '+(uns.length?'error':(notes.length?'warn':''));
+ $('polesBox').innerHTML=`<b>Closed-loop poles (roots of 1+L(s)):</b> ${uns.length?'⛔ UNSTABLE — '+uns.length+' right-half-plane pole(s)':'all in the left half-plane → stable'}<br>${list}`+(notes.length?'<br><b>Engineering checks:</b><ul style="margin:6px 0 0 18px">'+notes.map(x=>'<li>'+x+'</li>').join('')+'</ul>':'<br>All engineering checks passed (PM ≥ 45°, GM ≥ 6 dB, Fc ≤ limits).')}
+function v2plantBode(key,m){const el=$('pbode_'+key);if(!el)return;const tf=m.models[key],b=bodeData(tf),cm_='#c0392b',cp='#2d5fb8',nm=({vd:'Gvd(s) = vo/d',id:'Gid(s) = iL/d',vg:'Gvg(s) = vo/vg',load:'Zo(s) = vo/iload',vi:'Gvi(s) = vo/iL'})[key];
+ const sp={showspikes:true,spikemode:'across',spikedash:'dot',spikethickness:1,spikecolor:'#555'};
+ Plotly.newPlot('pbode_'+key,[{x:b.f,y:b.mag,name:'Magnitude (dB)',type:'scatter',mode:'lines',yaxis:'y',line:{color:cm_,width:2.8},hovertemplate:'Magnitude: %{y:.2f} dB<extra></extra>'},{x:b.f,y:b.ph,name:'Phase (deg)',type:'scatter',mode:'lines',yaxis:'y2',line:{color:cp,width:2.8},hovertemplate:'Phase: %{y:.2f} deg<extra></extra>'}],
+ {title:{text:nm+' — magnitude and phase'},hovermode:'x unified',xaxis:Object.assign({type:'log',title:'Frequency (Hz)',hoverformat:'.5~g'},sp),yaxis:{title:{text:'Magnitude (dB)',font:{color:cm_}},tickfont:{color:cm_},showspikes:true,spikemode:'toaxis',spikecolor:cm_},yaxis2:{title:{text:'Phase (deg)',font:{color:cp}},tickfont:{color:cp},overlaying:'y',side:'right',showgrid:false,showspikes:true,spikemode:'toaxis',spikecolor:cp}})}
+function v2plants(m){const K=[['vd','Gvd = vo/d'],['id','Gid = iL/d'],['vg','Gvg = vo/vg (line)'],['load','Zo = vo/iload'],['vi','Gvi = vo/iL']],rows=[];
+ K.forEach(([k,n])=>{const tf=m.models[k];if(!tf)return;const mgn=analyzeLoopMargins(tf,100),dc=tfEval(tf,c(0,1e-6));
+  rows.push(`<tr><td><b>${n}</b></td><td>${fmt(20*Math.log10(Math.max(abs(dc),1e-16)),2)} dB</td><td>${mgn.gainCrossings.length?mgn.gainCrossings.map(g=>fmt(g.fc,1)+' Hz / PM '+fmt(g.pm,1)+'°').join('<br>'):'no 0 dB crossover'}</td><td>${mgn.phaseCrossings.length?mgn.phaseCrossings.map(g=>fmt(g.gmDb,1)+' dB @ '+fmt(g.f180,1)+' Hz').join('<br>'):'no −180° crossing'}</td></tr>`)});
+ $('plantMargins').innerHTML='<table><thead><tr><th>Plant</th><th>DC gain</th><th>Gain crossover / phase margin</th><th>Gain margin</th></tr></thead><tbody>'+rows.join('')+'</tbody></table>';
+ document.querySelectorAll('#plantCards details.pcard').forEach(d=>{const key=d.dataset.key;if(d.open)v2plantBode(key,m);d.ontoggle=()=>{if(d.open)v2plantBode(key,m)}});
+ if($('method').value==='root'){const sp=selectedPlant(m);v2locus('plantRL',sp,2*Math.PI*Math.max(1,num('fc')),'Root locus of selected plant under proportional feedback')}}
+function v2disc(){const D=state.disc,S=state.comp;if(!D||!S)return;const T=D.T,fn=1/(2*T),sense=num('sense'),f=[],g1=[],p1=[],g2=[],p2=[],l1=[],q1=[],l2=[],q2=[];
+ for(let i=0;i<500;i++){const fr=Math.pow(10,Math.log10(fn*0.98)*i/499),w=2*Math.PI*fr,s=c(0,w),Hc=tfEval(S.tf,s),z={re:Math.cos(w*T),im:Math.sin(w*T)},Hd=v2cdv(v2pz(D.num,z),v2pz(D.den,z)),P=tfEval(S.plant,s),Lc=v2cmul(Hc,P),Ld=v2cmul(Hd,P);
+  f.push(fr);g1.push(20*Math.log10(Math.max(abs(Hc),1e-16)));p1.push(phase(Hc));g2.push(20*Math.log10(Math.max(Math.hypot(Hd.re,Hd.im),1e-16)));p2.push(Math.atan2(Hd.im,Hd.re)*180/Math.PI);
+  l1.push(20*Math.log10(Math.max(Math.hypot(Lc.re,Lc.im)*sense,1e-16)));q1.push(Math.atan2(Lc.im,Lc.re)*180/Math.PI);l2.push(20*Math.log10(Math.max(Math.hypot(Ld.re,Ld.im)*sense,1e-16)));q2.push(Math.atan2(Ld.im,Ld.re)*180/Math.PI)}
+ const unw=a=>{for(let i=1;i<a.length;i++){while(a[i]-a[i-1]>180)a[i]-=360;while(a[i]-a[i-1]<-180)a[i]+=360}return a};[p1,p2,q1,q2].forEach(unw);
+ const pm=(mag,ph)=>{let best=null;for(let i=1;i<f.length;i++)if(mag[i-1]*mag[i]<0){const t=mag[i-1]/(mag[i-1]-mag[i]),fc=f[i-1]*Math.pow(f[i]/f[i-1],t),val=180+ph[i-1]+t*(ph[i]-ph[i-1]);if(!best||Math.abs(fc-S.fc)<Math.abs(best.fc-S.fc))best={fc,pm:val}}return best};
+ const A=pm(l1,q1),B=pm(l2,q2),mk=(x,y,n,col,ax)=>({x:f,y,name:n,legendgroup:n,showlegend:ax==='1',xaxis:'x'+(ax==='1'?'':'2'),yaxis:'y'+(ax==='1'?'':'2'),type:'scatter',mode:'lines',line:{color:col,width:2.6}});
+ const lay=(t,y1,y2)=>({title:{text:t},showlegend:true,grid:{rows:2,columns:1,pattern:'independent'},xaxis:{type:'log',title:'Frequency (Hz) — up to Nyquist'},xaxis2:{type:'log',title:'Frequency (Hz) — up to Nyquist'},yaxis:{title:y1},yaxis2:{title:y2}});
+ Plotly.newPlot('discPlot',[mk(f,g1,'Gc(s) continuous','#2d5fb8','1'),mk(f,p1,'Gc(s) continuous','#2d5fb8','2'),mk(f,g2,'Gc(z) discrete','#c0392b','1'),mk(f,p2,'Gc(z) discrete','#c0392b','2')],lay('Controller: continuous Gc(s) vs discrete Gc(z) (gain and phase)','Magnitude (dB)','Phase (deg)'));
+ Plotly.newPlot('discLoopPlot',[mk(f,l1,'Loop, continuous controller','#2d5fb8','1'),mk(f,q1,'Loop, continuous controller','#2d5fb8','2'),mk(f,l2,'Loop, discrete controller (mixed-domain)','#c0392b','1'),mk(f,q2,'Loop, discrete controller (mixed-domain)','#c0392b','2')],lay('Open loop: continuous vs discretised controller','Magnitude (dB)','Phase (deg)'));
+ $('digitalWarn').textContent+=` Mixed-domain loop check (plant incl. delay × Gc(e^jωT)): continuous PM = ${A?fmt(A.pm,1)+'° @ '+fmt(A.fc,0)+' Hz':'n/a'}; discrete PM = ${B?fmt(B.pm,1)+'° @ '+fmt(B.fc,0)+' Hz':'n/a'}${A&&B?' (change '+fmt(B.pm-A.pm,1)+'°)':''}. Not a full sampled-data proof; verify on hardware.`}
+function v2ccs(src){const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'),kw=new Set(['if','for','while','switch','return','sizeof','else','do']),re=/(\/\*[\s\S]*?\*\/|\/\/[^\n]*)|("(?:\\.|[^"\\\n])*")|\b([A-Za-z_]\w*)(?=\s*\()/g;let o='',last=0,m;
+ while((m=re.exec(src))){o+=esc(src.slice(last,m.index));if(m[1])o+=m[1].split('\n').map(l=>'<span class="cm">'+esc(l)+'</span>').join('\n');else if(m[2])o+=esc(m[2]);else o+=kw.has(m[3])?esc(m[3]):'<b class="fn">'+esc(m[3])+'</b>';last=re.lastIndex}
+ o+=esc(src.slice(last));return o.split('\n').map(l=>'<span class="cl">'+(l===''?'\u200b':l)+'</span>').join('')}
+
+/* ===== plant cards: general symbolic TF -> your component values -> exact poles & zeros ===== */
+function v2fmtE(x){if(!Number.isFinite(x))return '∞';const a=Math.abs(x);return (a>=1e5||(a<1e-2&&a!==0))?x.toExponential(3):String(+x.toPrecision(5))}
+function v2rootRow(z){const mag=Math.hypot(z.re,z.im),hz=mag/2/Math.PI,rhp=z.re>1e-9*mag;
+ const s=z.im?`${v2fmtE(z.re)} ${z.im>0?'+':'−'} j${v2fmtE(Math.abs(z.im))}`:v2fmtE(z.re);
+ return `<tr><td class="n">s = ${s} rad/s</td><td class="n">${v2fmtE(hz)} Hz</td><td class="n">${z.im?'ζ = '+v2fmtE(-z.re/mag)+', Q = '+v2fmtE(mag/(-2*z.re)):'real'}</td><td class="${rhp?'pz-bad':'pz-ok'}">${rhp?'RIGHT half-plane':'left half-plane'}</td></tr>`}
+function v2pzTable(title,roots){if(!roots.length)return `<h4>${title}</h4><div class="small">none (finite)</div>`;
+ return `<h4>${title}</h4><table><thead><tr><th>Location</th><th>Frequency</th><th>Damping</th><th>Half-plane</th></tr></thead><tbody>${roots.map(v2rootRow).join('')}</tbody></table>`}
+function v2sciH(x){if(!Number.isFinite(x))return '∞';const a=Math.abs(x);if(a!==0&&(a>=1e5||a<1e-2)){const e=Math.floor(Math.log10(a)),mnt=+(x/Math.pow(10,e)).toPrecision(4);return mnt+'×10<sup>'+e+'</sup>'}return String(+x.toPrecision(5))}
+function v2factors(tf){ // numeric canonical form built from exact roots
+ const zr=v2roots(tf.num),pr=v2roots(tf.den),m0=zr.filter(z=>Math.hypot(z.re,z.im)===0).length;
+ const nz=zr.filter(z=>Math.hypot(z.re,z.im)>0),np=pr.filter(z=>Math.hypot(z.re,z.im)>0),p0=pr.length-np.length;
+ const nC=tf.num[tf.num.length-1-m0],dC=tf.den[tf.den.length-1-p0],K=nC/dC;
+ const f=(roots)=>{const out=[],used=new Set();roots.forEach((z,i)=>{if(used.has(i))return;if(z.im){const j=roots.findIndex((q,k)=>k>i&&!used.has(k)&&Math.abs(q.re-z.re)<1e-6*Math.hypot(z.re,z.im)&&Math.abs(q.im+z.im)<1e-6*Math.hypot(z.re,z.im));used.add(i);if(j>=0)used.add(j);const w2=z.re*z.re+z.im*z.im;out.push(`(1 + s/${v2sciH(Math.sqrt(w2)*Math.sqrt(w2)/(-2*z.re))} + s<sup>2</sup>/${v2sciH(w2)})`)}
+  else{used.add(i);out.push(z.re>0?`(1 − s/${v2sciH(z.re)})`:`(1 + s/${v2sciH(-z.re)})`)}});return out};
+ return {K,num:(m0?'s'+(m0>1?'<sup>'+m0+'</sup>':'')+' ':'')+(f(nz).join('·')||'1'),den:(p0?'s·':'')+(f(np).join('·')||'1')}}
+function v2plantCards(m){const el=$('plantCards');if(!el)return;
+ const top=m.top,k=top==='buck'?1:1-m.D,kS=top==='buck'?'1':'D′',Dp=1-m.D,a=m.a,Rp=a*m.Rc,R=m.R,L=m.L,C=m.C,Rl=m.Rl,Rc=m.Rc;
+ const d1=m.den[1],d0=m.den[2],w0=Math.sqrt(d0),Q=w0/d1,wesr=Rc>0?1/(Rc*C):Infinity,wrhp=Number.isFinite(m.rhp)?2*Math.PI*m.rhp:Infinity;
+ const wi=top==='buck'?1/(R*C):top==='boost'?2/(R*C):(1+m.D)/(R*C);
+ const dn='1 + s/(Q·ω<sub>0</sub>) + s²/ω<sub>0</sub>²',esr=Rc>0?'(1 + s/ω<sub>esr</sub>)':'',rh=top==='buck'?'':'(1 − s/ω<sub>rhp</sub>)';
+ const G0={vd:top==='buck'?'V<sub>g</sub>':'V<sub>g</sub>/D′²',id:top==='buck'?'V<sub>g</sub>/R':top==='boost'?'2V<sub>g</sub>/(R·D′³)':'V<sub>g</sub>(1+D)/(R·D′³)',vg:top==='buck'?'D':top==='boost'?'1/D′':'D/D′'};
+ const wiS=top==='buck'?'1/(R·C)':top==='boost'?'2/(R·C)':'(1+D)/(R·C)',rhS=top==='boost'?'(R·D′² − R<sub>l</sub>)/L':top==='bb'?'R·D′²/(D·L)':'—';
+ const sym={
+  vd:{n:`G<sub>0,vd</sub> ${esr}${rh}`,d:dn,note:`G<sub>0,vd</sub> ≈ ${G0.vd} (ideal); exact value with R<sub>l</sub>, R<sub>c</sub> is given below.`},
+  id:{n:`G<sub>0,id</sub> (1 + s/ω<sub>i</sub>)`,d:dn,note:`G<sub>0,id</sub> ≈ ${G0.id}; ω<sub>i</sub> ≈ ${wiS}.`},
+  vg:{n:`G<sub>0,vg</sub> ${esr}`,d:dn,note:`G<sub>0,vg</sub> ≈ ${G0.vg}.`},
+  load:{n:`(s·L/${kS==='1'?'1':'D′²'}) ${esr}`,d:dn,note:`Perturbation convention: positive î<sub>load</sub> draws current from the output.`},
+  vi:{n:`G<sub>0,vd</sub> ${esr}${rh}`,d:`G<sub>0,id</sub> (1 + s/ω<sub>i</sub>)`,note:`G<sub>vi</sub> = G<sub>vd</sub>/G<sub>id</sub>; the common denominator (1 + s/Qω<sub>0</sub> + s²/ω<sub>0</sub>²) cancels exactly because both come from the same averaged model.`}};
+ const names={vd:'G<sub>vd</sub>(s) = v̂<sub>o</sub>/d̂',id:'G<sub>id</sub>(s) = î<sub>L</sub>/d̂',vg:'G<sub>vg</sub>(s) = v̂<sub>o</sub>/v̂<sub>g</sub>',load:'Z<sub>o</sub>(s) = v̂<sub>o</sub>/î<sub>load</sub>',vi:'G<sub>vi</sub>(s) = v̂<sub>o</sub>/î<sub>L</sub>'};
+ const sel=$('plant').value;
+ const delta=`<div class="eq" style="font-size:12.5px"><b>Characteristic polynomial (exact, includes R<sub>l</sub> and R<sub>c</sub>):</b><br>Δ(s) = s² + [ (R<sub>l</sub> + ${kS}·R<sub>p</sub>)/L + a/(R·C) ]·s + a·[ (R<sub>l</sub> + ${kS}·R<sub>p</sub>)/R + ${kS==='1'?'':kS+'²·'}a ] / (L·C)<br>
+ with a = R/(R+R<sub>c</sub>), R<sub>p</sub> = a·R<sub>c</sub>, D′ = 1 − D &nbsp;→&nbsp; ω<sub>0</sub> = √(coefficient of s⁰), Q = ω<sub>0</sub>/(coefficient of s¹), ω<sub>esr</sub> = 1/(R<sub>c</sub>·C), ω<sub>rhp</sub> = ${rhS}<br>
+ <span class="small">Ideal limits (R<sub>l</sub>=R<sub>c</sub>=0): ω<sub>0</sub> = ${kS==='1'?'':'D′/'}${kS==='1'?'1/':''}√(LC)${kS==='1'?'':''}, Q = ${kS==='1'?'':'D′·'}R·√(C/L).</span></div>`;
+ const vals=`<table><thead><tr><th>Symbol</th><th>Formula</th><th>Value with your inputs</th></tr></thead><tbody>
+ <tr><td>L, C, R</td><td>entered / R = V<sub>o</sub>²/P</td><td class="n">${v2fmtE(L*1e6)} µH, ${v2fmtE(C*1e6)} µF, ${v2fmtE(R)} Ω</td></tr>
+ <tr><td>R<sub>l</sub>, R<sub>c</sub></td><td>entered</td><td class="n">${v2fmtE(Rl*1e3)} mΩ, ${v2fmtE(Rc*1e3)} mΩ</td></tr>
+ <tr><td>D, D′</td><td>solved operating point</td><td class="n">${v2fmtE(m.D)}, ${v2fmtE(Dp)}</td></tr>
+ <tr><td>a, R<sub>p</sub></td><td>R/(R+R<sub>c</sub>), a·R<sub>c</sub></td><td class="n">${v2fmtE(a)}, ${v2fmtE(Rp*1e3)} mΩ</td></tr>
+ <tr><td>ω<sub>0</sub></td><td>√(Δ₀)</td><td class="n">${v2fmtE(w0)} rad/s = ${v2fmtE(w0/2/Math.PI)} Hz</td></tr>
+ <tr><td>Q  (ζ = 1/2Q)</td><td>ω<sub>0</sub>/Δ₁</td><td class="n">${v2fmtE(Q)}  (ζ = ${v2fmtE(1/(2*Q))})</td></tr>
+ <tr><td>Q·ω<sub>0</sub> , ω<sub>0</sub>²</td><td>denominator terms</td><td class="n">${v2fmtE(Q*w0)} rad/s , ${v2fmtE(d0)} rad²/s²</td></tr>
+ <tr><td>ω<sub>esr</sub></td><td>1/(R<sub>c</sub>·C)</td><td class="n">${v2fmtE(wesr)} rad/s = ${v2fmtE(wesr/2/Math.PI)} Hz</td></tr>
+ <tr><td>ω<sub>rhp</sub></td><td>${rhS}</td><td class="n">${v2fmtE(wrhp)} rad/s = ${v2fmtE(wrhp/2/Math.PI)} Hz</td></tr>
+ <tr><td>ω<sub>i</sub></td><td>${wiS}</td><td class="n">${v2fmtE(wi)} rad/s = ${v2fmtE(wi/2/Math.PI)} Hz</td></tr></tbody></table>`;
+ const keys=(ARCH_PLANTS[$('arch').value]||ARCH_PLANTS.vmode).map(o=>o.value);
+ const order=['vd','id','vi','vg','load'].filter(x=>m.models[x]);
+ const cards=order.map(key=>{const tf=m.models[key],fa=v2factors(tf),zr=v2roots(tf.num),pr=v2roots(tf.den),g0=tf.num[tf.num.length-1]/tf.den[tf.den.length-1];
+  return `<details class="pcard" data-key="${key}" ${key===sel?'open':''}><summary>${names[key]} ${keys.includes(key)?'':'<span class="small">(not used by the chosen architecture)</span>'}</summary><div class="pc-body">
+  <h4>1 · General transfer function (symbolic, valid for any component values)</h4>
+  ${renderSymbolicFrac(names[key],sym[key].n,sym[key].d)}<div class="small">${sym[key].note}</div>
+  <h4>2 · Same function with your component values (factored from the exact model)</h4>
+  ${renderSymbolicFrac(names[key].split('=')[0],v2sciH(fa.K)+' '+fa.num,fa.den)}<div class="small">DC gain = ${v2fmtE(g0)} (${v2fmtE(20*Math.log10(Math.max(Math.abs(g0),1e-16)))} dB)</div>
+  <h4>3 · Exact polynomial form</h4>${renderVerticalTF(names[key].split('=')[0],tf.num,tf.den,'s')}
+  ${v2pzTable('Poles of '+names[key].split('=')[0],pr)}${v2pzTable('Zeros of '+names[key].split('=')[0],zr)}<h4>4 · Frequency response — magnitude and phase (move the cursor to read both values)</h4><div class="plot" id="pbode_${key}"></div></div></details>`}).join('');
+ el.innerHTML=`<h3>Plant transfer functions: general form → your values → poles &amp; zeros</h3>${delta}${vals}${cards}`}
+/* wrap existing functions (hoisted declarations are re-bound) */
+function v2innerUI(){const arch=$("arch").value,box=$("ibwBox");if(!box)return;box.style.display=arch==="cascade"?"block":"none";if(arch!=="cascade")return;const I=state.inner;
+ $("ibwRow").style.display=I?"none":"block";
+ $("innerStatus").innerHTML=I?`✔ Inner loop taken from your designed <b>ACMC current compensator</b> (crossover ${fmt(I.fc,0)} Hz, PM ${fmt(I.pm,1)}°). The outer plant uses the exact closed inner loop Ti(s) = L<sub>i</sub>/(1+L<sub>i</sub>) recomputed from the present converter values. To change it: choose “Only average current-mode control”, redesign, then return here.`:`⚠ No ACMC current compensator designed yet. For exact results first design the current loop (architecture “Only average current-mode control”). Until then a first-order Ti(s) = ωci/(s+ωci) is assumed with the bandwidth below.`}
+function v2rlSync(){const root=$("method").value==="root";["rlPlot","plantRL"].forEach(i=>{const e=$(i);if(e)e.style.display=root?"":"none"})}
+const v2_calc=calculateDesign;calculateDesign=function(a){const r=v2_calc(a);
+ try{if($("arch").value==="acmc"&&state.comp&&state.comp.chosenCross)state.inner={tf:state.comp.tf,H:num("sense"),fc:state.comp.chosenCross.fc,pm:state.comp.chosenCross.pm};v2innerUI();v2rlSync();v2design()}catch(e){console.error(e)}return r};
+const v2_up=updatePlantTab;updatePlantTab=function(m){const r=v2_up(m);try{v2plantCards(m)}catch(e){console.error(e)}try{v2plants(m)}catch(e){console.error(e)}return r};
+const v2_dz=discretize;discretize=function(){const r=v2_dz.apply(this,arguments);try{v2disc()}catch(e){console.error(e)}return r};
+const v2_cs=cSource;cSource=function(){const t=v2_cs();window.v2lastC=t;const el=$('cCode');if(el)el.innerHTML=v2ccs(t);return t};
+document.addEventListener('DOMContentLoaded',()=>{["arch","method"].forEach(i=>$(i)&&$(i).addEventListener("change",()=>{try{v2innerUI();v2rlSync()}catch(e){}}));try{v2innerUI();v2rlSync()}catch(e){}const b=$('copyC');if(b)b.onclick=()=>{if(window.v2lastC&&navigator.clipboard)navigator.clipboard.writeText(window.v2lastC);b.textContent='Copied';setTimeout(()=>b.textContent='Copy code',1200)}});
+/* ===================== end v2 extras ===================== */
+
+const state={models:{}, selected:null, comp:null, disc:null, analog:null, freq:[], bode:null, suppressModal:false};
+const num=id=>Number($(id).value);
+const fmt=(x,n=4)=>Number.isFinite(x)?x.toLocaleString("en-US",{maximumFractionDigits:n}):(x===Infinity?"∞":"undefined");
+const fmtSci=(x,p=5)=>{
+  if(!Number.isFinite(x)) return "0";
+  if(Math.abs(x)===0) return "0";
+  if(Math.abs(x)>=1e-3 && Math.abs(x)<1e5) return Number(x.toPrecision(p)).toString();
+  return x.toExponential(p-1);
+};
+const c=(re,im=0)=>({re,im});
+const add=(a,b)=>c(a.re+b.re,a.im+b.im), sub=(a,b)=>c(a.re-b.re,a.im-b.im), mul=(a,b)=>c(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re), div=(a,b)=>{let d=b.re*b.re+b.im*b.im;return c((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d)};
+const abs=a=>Math.hypot(a.re,a.im), phase=a=>Math.atan2(a.im,a.re)*180/Math.PI;
+
+function showPmPopup(title, htmlMsg, isError=false){
+  if(state.suppressModal) return;
+  const modal = $("pmModal");
+  const box = $("pmModalBox");
+  $("pmModalTitle").innerHTML = (isError ? "⛔ " : "⚠️ ") + title;
+  $("pmModalBody").innerHTML = htmlMsg;
+  box.classList.toggle("error-modal", isError);
+  modal.classList.add("show");
+}
+$("pmModalClose").onclick = ()=>$("pmModal").classList.remove("show");
+$("pmModal").addEventListener("click", (e)=>{if(e.target===$("pmModal"))$("pmModal").classList.remove("show")});
+
+function polyEval(p,s){let v=c(0);for(const a of p)v=add(mul(v,s),c(a));return v}
+function tfEval(tf,s){return div(polyEval(tf.num,s),polyEval(tf.den,s))}
+function tfMul(a,b){return {num:conv(a.num,b.num),den:conv(a.den,b.den)}}
+function conv(a,b){let r=Array(a.length+b.length-1).fill(0);a.forEach((x,i)=>b.forEach((y,j)=>r[i+j]+=x*y));return r}
+function polyAdd(a,b,scale=1){let n=Math.max(a.length,b.length),A=Array(n-a.length).fill(0).concat(a),B=Array(n-b.length).fill(0).concat(b);return A.map((v,i)=>v+scale*B[i])}
+function normalize(tf){
+  let idx=tf.den.findIndex(x=>Math.abs(x)>1e-30);
+  let k=idx>=0?tf.den[idx]:1;
+  let nClean = tf.num.map(x=>x/k);
+  while(nClean.length > 1 && Math.abs(nClean[0]) < 1e-22) nClean.shift();
+  return {num:nClean, den:tf.den.map(x=>x/k)};
+}
+
+function formatPolyHTML(coeffs, variable="s"){
+  const N = coeffs.length - 1;
+  let terms = [];
+  coeffs.forEach((val, idx)=>{
+    const p = N - idx;
+    if(Math.abs(val) < 1e-18 && coeffs.length > 1) return;
+    const sign = val < 0 ? " − " : (terms.length > 0 ? " + " : "");
+    const absVal = Math.abs(val);
+    let coeffStr = (Math.abs(absVal - 1) < 1e-9 && p > 0) ? "" : fmtSci(absVal, 5);
+    let varStr = "";
+    if(p === 1) varStr = variable;
+    else if(p > 1) varStr = `${variable}<sup>${p}</sup>`;
+    let prod = (coeffStr && varStr) ? `${coeffStr}·${varStr}` : `${coeffStr}${varStr}`;
+    terms.push(sign + prod);
+  });
+  return terms.length ? terms.join("") : "0";
+}
+
+function renderVerticalTF(lhs, numCoeffs, denCoeffs, variable="s", metaHtml=""){
+  const numStr = formatPolyHTML(numCoeffs, variable);
+  const denStr = formatPolyHTML(denCoeffs, variable);
+  return `<div class="tf-wrap"><span class="tf-lhs">${lhs} =</span><div class="tf-frac"><div class="tf-num">${numStr}</div><div class="tf-den">${denStr}</div></div></div>${metaHtml?`<div class="tf-meta">${metaHtml}</div>`:""}`;
+}
+
+function renderSymbolicFrac(lhs, numHtml, denHtml){
+  return `<div class="tf-wrap" style="padding:2px 0"><span class="tf-lhs">${lhs} =</span><div class="tf-frac"><div class="tf-num">${numHtml}</div><div class="tf-den">${denHtml}</div></div></div>`;
+}
+
+const ARCH_PLANTS = {
+  vmode: [
+    {value:"vd", label:"Vout / duty · Gvd(s) [Voltage-Mode Control Plant]"},
+    {value:"vg", label:"Vout / Vin · Gvg(s) [Input Audio Susceptibility Disturbance]"},
+    {value:"load", label:"Vout / Iload · Zo(s) [Output Impedance Load Disturbance]"}
+  ],
+  acmc: [
+    {value:"id", label:"Inductor current / duty · Gid(s) [Avg Current-Mode Plant]"},
+    {value:"vg", label:"Vout / Vin · Gvg(s) [Input Audio Susceptibility Disturbance]"},
+    {value:"load", label:"Vout / Iload · Zo(s) [Output Impedance Load Disturbance]"}
+  ],
+  cascade: [
+    {value:"vi", label:"Vout / IL · Gvi(s) [Outer Voltage Plant · Inner Current Loop = 1]"},
+    {value:"id", label:"Inductor current / duty · Gid(s) [Inner Current Loop Plant]"},
+    {value:"vg", label:"Vout / Vin · Gvg(s) [Input Audio Susceptibility Disturbance]"},
+    {value:"load", label:"Vout / Iload · Zo(s) [Output Impedance Load Disturbance]"}
+  ]
+};
+
+function updatePlantDropdownForArch(){
+  const arch = $("arch").value;
+  const sel = $("plant");
+  const prev = sel.value;
+  const allowed = ARCH_PLANTS[arch] || ARCH_PLANTS.vmode;
+  sel.innerHTML = allowed.map(o=>`<option value="${o.value}">${o.label}</option>`).join("");
+  if(allowed.some(o=>o.value===prev)){
+    sel.value = prev;
+  } else {
+    sel.value = allowed[0].value;
+  }
+  updatePlantHintText();
+}
+
+function updatePlantHintText(){
+  const arch = $("arch").value;
+  const p = $("plant").value;
+  const hints = {
+    vd: "Direct Voltage-Mode Control plant Gvd(s) = v̂o(s)/d̂(s) (with v̂g = 0, îz = 0). Includes Rl and Rc parasitics.",
+    id: "Average Current-Mode Control plant Gid(s) = îL(s)/d̂(s) (inductor current to duty ratio).",
+    vi: "Cascaded Outer Voltage Loop plant Gvi(s) = v̂o(s)/îL(s) = Gvd(s)/Gid(s). Inner current loop is modelled as Ti(s) = ωci/(s+ωci) (set “Inner current-loop BW”); the closed-loop plot evaluates Vout(s)/Vref(s).",
+    vg: "Input disturbance (Audio Susceptibility F(s) = v̂o(s)/v̂g(s)).",
+    load: "Load current disturbance (Open-loop Output Impedance Zo(s) = v̂o(s)/îz(s))."
+  };
+  $("plantHint").textContent = `[${arch==="vmode"?"Voltage-Mode":arch==="acmc"?"Average Current-Mode":"Cascaded Voltage + Current"}] ` + (hints[p] || "");
+}
+
+function updateConverterDerivedInputs(){
+  const Vin = num("vin"), Vo = Math.abs(num("vout")), P = num("power");
+  if(Vin > 0 && Vo > 0 && P > 0){
+    const Io = P / Vo;
+    const Iin = P / Vin;
+    const R = (Vo * Vo) / P;
+    $("iout").value = Number(Io.toFixed(4));
+    $("iin").value = Number(Iin.toFixed(4));
+    $("load").value = Number(R.toFixed(4));
+  }
+}
+
+function plantModels(){
+ updateConverterDerivedInputs();
+ const top=$("topology").value, Vin=num("vin"), Vo=Math.abs(num("vout")), P=num("power");
+ const R = (Vo > 0 && P > 0) ? (Vo * Vo) / P : num("load");
+ const Io = (Vo > 0 && P > 0) ? P / Vo : (R > 0 ? Vo / R : 0);
+ const Iin = (Vin > 0 && P > 0) ? P / Vin : 0;
+ const L = num("ind")*1e-6, Cc = num("cap")*1e-6;
+ const Rl = Math.max(0, num("dcr")*1e-3);
+ const Rc = Math.max(0, num("esr")*1e-3);
+ if(!(Vin>0&&Vo>0&&P>0&&R>0&&L>0&&Cc>0)) throw Error("Vin, |Vout|, Power P, L and C must all be positive.");
+
+ const a = R / (R + Rc);
+ const Rpar = a * Rc;
+
+ let D, IL, VC, A1, A2, b1, b2, q1, q2, m1, m2, k1, k2, dcLabel;
+
+ if(top === "buck"){
+   IL = Io;
+   VC = Vo;
+   D = Math.min(0.99, Math.max(0.01, (Vo + IL * Rl) / Vin));
+   A1 = [ [-(Rl + Rpar)/L, -a/L], [a/Cc, -a/(R*Cc)] ];
+   A2 = [ [-(Rl + Rpar)/L, -a/L], [a/Cc, -a/(R*Cc)] ];
+   b1 = [1/L, 0]; b2 = [0, 0];
+   q1 = [Rpar, a]; q2 = [Rpar, a];
+   m1 = [Rpar/L, -a/Cc]; m2 = [Rpar/L, -a/Cc];
+   k1 = -Rpar; k2 = -Rpar;
+   dcLabel = "Vout = D·Vg − IL·Rl (Buck with Rl & Rc)";
+ } else if(top === "boost"){
+   let idealD = 1 - Vin/Vo;
+   D = Math.min(0.98, Math.max(0.01, idealD));
+   const Do = a*(Rl/R) + (1-D)*a*a*(Rc/R) + a*a*(1-D)*(1-D);
+   IL = Vin / (R * Do);
+   VC = (1 - D) * Vin / Do;
+   A1 = [ [-Rl/L, 0], [0, -a/(R*Cc)] ];
+   A2 = [ [-(Rl + Rpar)/L, -a/L], [a/Cc, -a/(R*Cc)] ];
+   b1 = [1/L, 0]; b2 = [1/L, 0];
+   q1 = [0, a]; q2 = [Rpar, a];
+   m1 = [0, -a/Cc]; m2 = [Rpar/L, -a/Cc];
+   k1 = 0; k2 = -Rpar;
+   dcLabel = "Vout = Vg·(1−D)·a / [a·α + (1−D)a²β + a²(1−D)²] (Boost with Rl & Rc)";
+ } else {
+   let idealD = Vo / (Vin + Vo);
+   D = Math.min(0.98, Math.max(0.01, idealD));
+   const Do = a*(Rl/R) + (1-D)*a*a*(Rc/R) + a*a*(1-D)*(1-D);
+   IL = (D * Vin) / (R * Do);
+   VC = (D * (1 - D) * Vin) / Do;
+   A1 = [ [-Rl/L, 0], [0, -a/(R*Cc)] ];
+   A2 = [ [-(Rl + Rpar)/L, -a/L], [a/Cc, -a/(R*Cc)] ];
+   b1 = [1/L, 0]; b2 = [0, 0];
+   q1 = [0, a]; q2 = [Rpar, a];
+   m1 = [0, -a/Cc]; m2 = [Rpar/L, -a/Cc];
+   k1 = 0; k2 = -Rpar;
+   dcLabel = "|Vout| = Vg·D/(1−D) with Rl & Rc (Inverting Buck-Boost)";
+ }
+
+ const Dp = 1 - D;
+ const A = [
+   [A1[0][0]*D + A2[0][0]*Dp, A1[0][1]*D + A2[0][1]*Dp],
+   [A1[1][0]*D + A2[1][0]*Dp, A1[1][1]*D + A2[1][1]*Dp]
+ ];
+ const Bg = [b1[0]*D + b2[0]*Dp, b1[1]*D + b2[1]*Dp];
+ const q  = [q1[0]*D + q2[0]*Dp, q1[1]*D + q2[1]*Dp];
+ const mVec = [m1[0]*D + m2[0]*Dp, m1[1]*D + m2[1]*Dp];
+ const kScalar = k1*D + k2*Dp;
+
+ const X = [IL, VC];
+ const dA = [
+   [A1[0][0] - A2[0][0], A1[0][1] - A2[0][1]],
+   [A1[1][0] - A2[1][0], A1[1][1] - A2[1][1]]
+ ];
+ const fVec = [
+   dA[0][0]*X[0] + dA[0][1]*X[1] + (b1[0] - b2[0])*Vin,
+   dA[1][0]*X[0] + dA[1][1]*X[1] + (b1[1] - b2[1])*Vin
+ ];
+ const dDirect = (q1[0] - q2[0])*X[0] + (q1[1] - q2[1])*X[1];
+
+ const tr = A[0][0] + A[1][1];
+ const det = A[0][0]*A[1][1] - A[0][1]*A[1][0];
+ const den = [1, -tr, det];
+
+ function stateTfFromVec(vec, outRow, directTerm=0){
+   const n_iL = [vec[0], -A[1][1]*vec[0] + A[0][1]*vec[1]];
+   const n_vC = [vec[1], A[1][0]*vec[0] - A[0][0]*vec[1]];
+   const combined = [
+     outRow[0]*n_iL[0] + outRow[1]*n_vC[0],
+     outRow[0]*n_iL[1] + outRow[1]*n_vC[1]
+   ];
+   const numWithDirect = polyAdd(combined, den, directTerm);
+   return normalize({num: numWithDirect, den: den.slice()});
+ }
+
+ const vd   = stateTfFromVec(fVec, q, dDirect);
+ const id   = stateTfFromVec(fVec, [1, 0], 0);
+ const vg   = stateTfFromVec(Bg, q, 0);
+ const load = stateTfFromVec(mVec, q, kScalar);
+ const vi   = normalize({num: vd.num.slice(), den: id.num.slice()});
+
+ const f0 = Math.sqrt(Math.max(0, det)) / (2 * Math.PI);
+ const Qfactor = Math.sqrt(Math.max(0, det)) / Math.max(1e-9, -tr);
+ const rhp = top==="boost" ? (R*(1-D)*(1-D) - Rl)/(2*Math.PI*L) : (top==="bb" ? R*(1-D)*(1-D)/(2*Math.PI*L*D) : Infinity);
+ const fesr = Rc > 0 ? 1 / (2 * Math.PI * Cc * Rc) : Infinity;
+
+ return {top,Vin,Vo,R,Io,Iin,L,C:Cc,Rl,Rc,a,P,D,IL,VC,A1,A2,A,Bg,fVec,q,den,models:{vd,id,vg,load,vi},f0,Qfactor,rhp,fesr,dcLabel};
+}
+
+function selectedPlant(m){return m.models[$("plant").value]}
+function plantName(k){return ({
+  vd:"Gvd(s) = v̂o(s) / d̂(s)",
+  id:"Gid(s) = îL(s) / d̂(s)",
+  vg:"F(s) = v̂o(s) / v̂g(s)",
+  load:"Zo(s) = v̂o(s) / îload(s)",
+  vi:"Gvi(s) = v̂o(s) / îL(s) [× Ti(s) inner loop]"
+})[k]}
+function coeffText(a){return "["+a.map(x=>Number(x.toPrecision(5))).join(", ")+"]"}
+
+function drawHorizSwitchWithAntiParallelDiode(x1, y, labelTop, labelSub){
+  const x2 = x1 + 90;
+  const xm1 = x1 + 22, xm2 = x1 + 68;
+  return `
+  <rect x="${x1+6}" y="${y-44}" width="78" height="72" rx="6" class="sw-box"/>
+  <line x1="${x1}" y1="${y}" x2="${xm1}" y2="${y}" class="wire"/>
+  <line x1="${xm2}" y1="${y}" x2="${x2}" y2="${y}" class="wire"/>
+  <circle cx="${xm1}" cy="${y}" r="3.2" fill="#179cae"/>
+  <circle cx="${xm2}" cy="${y}" r="3.2" fill="#179cae"/>
+  <line x1="${xm1}" y1="${y}" x2="${xm2-4}" y2="${y-16}" class="accent"/>
+  <line x1="${x1+36}" y1="${y-22}" x2="${x1+52}" y2="${y-22}" class="comp"/>
+  <line x1="${x1+44}" y1="${y-22}" x2="${x1+44}" y2="${y-35}" class="comp"/>
+  <text x="${x1+44}" y="${y-50}" text-anchor="middle" style="fill:#179eae;font-weight:700;font-size:11.5px">${labelTop}</text>
+  <text x="${x1+44}" y="${y+39}" text-anchor="middle" style="fill:#6f8266;font-size:10.5px">${labelSub}</text>
+  <path class="wire" d="M${xm1-6} ${y} V${y+16} H${x1+36} M${x1+54} ${y+16} H${xm2+6} V${y}"/>
+  <polygon points="${x1+54},${y+10} ${x1+54},${y+22} ${x1+38},${y+16}" class="comp"/>
+  <line x1="${x1+38}" y1="${y+9}" x2="${x1+38}" y2="${y+23}" class="comp"/>
+  `;
+}
+
+function drawVertSwitchWithAntiParallelDiode(x, y1, labelRight, labelSub){
+  const y2 = y1 + 90;
+  const ym1 = y1 + 22, ym2 = y1 + 68;
+  return `
+  <rect x="${x-36}" y="${y1+6}" width="78" height="78" rx="6" class="sw-box"/>
+  <line x1="${x}" y1="${y1}" x2="${x}" y2="${ym1}" class="wire"/>
+  <line x1="${x}" y1="${ym2}" x2="${x}" y2="${y2}" class="wire"/>
+  <circle cx="${x}" cy="${ym1}" r="3.2" fill="#179cae"/>
+  <circle cx="${x}" cy="${ym2}" r="3.2" fill="#179cae"/>
+  <line x1="${x}" y1="${ym2}" x2="${x-16}" y2="${ym1+4}" class="accent"/>
+  <line x1="${x-22}" y1="${y1+37}" x2="${x-22}" y2="${y1+53}" class="comp"/>
+  <line x1="${x-22}" y1="${y1+45}" x2="${x-33}" y2="${y1+45}" class="comp"/>
+  <path class="wire" d="M${x} ${ym1-6} H${x+20} V${y1+37} M${x+20} ${y1+55} V${ym2+6} H${x}"/>
+  <polygon points="${x+14},${y1+55} ${x+26},${y1+55} ${x+20},${y1+39}" class="comp"/>
+  <line x1="${x+13}" y1="${y1+39}" x2="${x+27}" y2="${y1+39}" class="comp"/>
+  <text x="${x+48}" y="${y1+42}" style="fill:#179eae;font-weight:700;font-size:11.5px">${labelRight}</text>
+  <text x="${x+48}" y="${y1+58}" style="fill:#6f8266;font-size:10.5px">${labelSub}</text>
+  `;
+}
+
+function drawSchematic(m){
+ let s=$("schematic"),top=m.top;
+ let titleStr = top==="buck" ? "NON-IDEAL CCM BUCK CONVERTER (WITH INDUCTOR ESR Rl & CAPACITOR ESR Rc)" :
+                top==="boost" ? "NON-IDEAL CCM BOOST CONVERTER (WITH INDUCTOR ESR Rl & CAPACITOR ESR Rc)" :
+                "NON-IDEAL CCM INVERTING BUCK-BOOST CONVERTER (WITH INDUCTOR ESR Rl & CAPACITOR ESR Rc)";
+
+ let commonDefs = `<defs>
+   <marker id="arrow" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#179cae"/></marker>
+ </defs>
+ <text x="24" y="26" style="font-weight:700;fill:#179eae;font-size:13px;letter-spacing:0.3px">${titleStr}</text>`;
+
+ const vgSourceSvg = `
+   <path class="wire" d="M105 110 V158 M105 202 V260 H745"/>
+   <circle cx="105" cy="180" r="22" class="accent" style="fill:#d9e2f2"/>
+   <text x="105" y="175" text-anchor="middle" style="fill:#18a660;font-weight:700;font-size:14px">+</text>
+   <text x="105" y="193" text-anchor="middle" style="fill:#ac0012;font-weight:700;font-size:15px">−</text>
+   <text x="74" y="176" text-anchor="end" style="fill:#123980;font-weight:700;font-size:12.5px">Vg = ${m.Vin} V</text>
+   <text x="74" y="193" text-anchor="end" style="fill:#6f8266;font-size:11px">Iin = ${fmt(m.Iin,2)} A</text>
+   <path class="wire" d="M105 260 V273 M93 273 H117 M97 278 H113 M101 283 H109"/>
+ `;
+
+ let bodySvg = "";
+ if(top === "buck"){
+   bodySvg = vgSourceSvg + `
+   <path class="wire" d="M105 110 H150"/>
+   ${drawHorizSwitchWithAntiParallelDiode(150, 110, "S (Q1)", "ON: d·Ts")}
+   <path class="wire" d="M240 110 H305"/>
+   <path class="wire" d="M275 260 V200 M275 170 V110"/>
+   <polygon points="263,200 287,200 275,170" class="comp"/>
+   <line x1="261" y1="170" x2="289" y2="170" class="comp"/>
+   <text x="253" y="190" text-anchor="end" style="fill:#b27300;font-weight:600">D: (1−d)Ts</text>
+   <path class="accent" marker-end="url(#arrow)" d="M312 92 H360"/>
+   <text x="336" y="83" text-anchor="middle" style="fill:#179eae;font-weight:600">iL(t) = ${fmt(m.IL,2)} A</text>
+   <path class="wire" d="M305 110 H330"/>
+   <path class="parasitic" d="M330 110 l6 -8 l10 16 l10 -16 l10 16 l10 -16 l6 8"/>
+   <text x="356" y="136" text-anchor="middle" style="fill:#ac0012;font-weight:600">Rl = ${fmt(m.Rl*1e3,1)} mΩ</text>
+   <path class="wire" d="M382 110 H415"/>
+   <path class="comp" d="M415 110 q8 -18 16 0 t16 0 t16 0 t16 0"/>
+   <text x="447" y="86" text-anchor="middle" style="fill:#b27300;font-weight:700">L = ${fmt(m.L*1e6,1)} µH</text>
+   <path class="wire" d="M479 110 H580"/>
+   <path class="wire" d="M580 110 V148"/>
+   <line x1="562" y1="148" x2="598" y2="148" class="accent"/>
+   <line x1="562" y1="158" x2="598" y2="158" class="accent"/>
+   <text x="550" y="157" text-anchor="end" style="fill:#179eae;font-weight:700">C = ${fmt(m.C*1e6,1)} µF</text>
+   <path class="wire" d="M580 158 V182"/>
+   <path class="parasitic" d="M580 182 l-8 5 l16 9 l-16 9 l16 9 l-16 9 l8 5"/>
+   <text x="562" y="210" text-anchor="end" style="fill:#ac0012;font-weight:600">Rc = ${fmt(m.Rc*1e3,1)} mΩ</text>
+   <path class="wire" d="M580 228 V260"/>
+   <path class="wire" d="M580 110 H745 V150"/>
+   <path class="comp" d="M745 150 l-9 7 l18 12 l-18 12 l18 12 l-18 12 l9 7"/>
+   <path class="wire" d="M745 212 V260"/>
+   <text x="764" y="172" style="fill:#18a660;font-weight:700">R = ${fmt(m.R,2)} Ω</text>
+   <text x="764" y="191" style="fill:#124385;font-weight:600">Vo = +${fmt(m.Vo,1)} V</text>
+   <text x="764" y="209" style="fill:#6f8266">Io = ${fmt(m.Io,3)} A</text>`;
+ } else if(top === "boost"){
+   bodySvg = vgSourceSvg + `
+   <path class="wire" d="M105 110 H145"/>
+   <path class="accent" marker-end="url(#arrow)" d="M115 92 H165"/>
+   <text x="142" y="83" text-anchor="middle" style="fill:#179eae;font-weight:600">iL(t) = ${fmt(m.IL,2)} A</text>
+   <path class="parasitic" d="M145 110 l6 -8 l10 16 l10 -16 l10 16 l10 -16 l6 8"/>
+   <text x="171" y="136" text-anchor="middle" style="fill:#ac0012;font-weight:600">Rl = ${fmt(m.Rl*1e3,1)} mΩ</text>
+   <path class="wire" d="M197 110 H230"/>
+   <path class="comp" d="M230 110 q8 -18 16 0 t16 0 t16 0 t16 0"/>
+   <text x="262" y="86" text-anchor="middle" style="fill:#b27300;font-weight:700">L = ${fmt(m.L*1e6,1)} µH</text>
+   <path class="wire" d="M294 110 H365"/>
+   <path class="wire" d="M365 110 V140 M365 230 V260"/>
+   ${drawVertSwitchWithAntiParallelDiode(365, 140, "S (Q1)", "ON: d·Ts")}
+   <path class="wire" d="M365 110 H455"/>
+   <polygon points="455,98 455,122 485,110" class="comp"/>
+   <line x1="485" y1="96" x2="485" y2="124" class="comp"/>
+   <text x="470" y="86" text-anchor="middle" style="fill:#b27300;font-weight:600">D · (1−d)Ts</text>
+   <path class="wire" d="M485 110 H585"/>
+   <path class="wire" d="M585 110 V148"/>
+   <line x1="567" y1="148" x2="603" y2="148" class="accent"/>
+   <line x1="567" y1="158" x2="603" y2="158" class="accent"/>
+   <text x="555" y="157" text-anchor="end" style="fill:#179eae;font-weight:700">C = ${fmt(m.C*1e6,1)} µF</text>
+   <path class="wire" d="M585 158 V182"/>
+   <path class="parasitic" d="M585 182 l-8 5 l16 9 l-16 9 l16 9 l-16 9 l8 5"/>
+   <text x="567" y="210" text-anchor="end" style="fill:#ac0012;font-weight:600">Rc = ${fmt(m.Rc*1e3,1)} mΩ</text>
+   <path class="wire" d="M585 228 V260"/>
+   <path class="wire" d="M585 110 H745 V150"/>
+   <path class="comp" d="M745 150 l-9 7 l18 12 l-18 12 l18 12 l-18 12 l9 7"/>
+   <path class="wire" d="M745 212 V260"/>
+   <text x="764" y="172" style="fill:#18a660;font-weight:700">R = ${fmt(m.R,2)} Ω</text>
+   <text x="764" y="191" style="fill:#124385;font-weight:600">Vo = +${fmt(m.Vo,1)} V</text>
+   <text x="764" y="209" style="fill:#6f8266">Io = ${fmt(m.Io,3)} A</text>`;
+ } else {
+   bodySvg = vgSourceSvg + `
+   <path class="wire" d="M105 110 H155"/>
+   ${drawHorizSwitchWithAntiParallelDiode(155, 110, "S (Q1)", "ON: d·Ts")}
+   <path class="wire" d="M245 110 H355"/>
+   <path class="wire" d="M355 110 V132"/>
+   <path class="comp" d="M355 132 q16 6 0 12 t0 12 t0 12 t0 12"/>
+   <text x="335" y="160" text-anchor="end" style="fill:#b27300;font-weight:700">L = ${fmt(m.L*1e6,1)} µH</text>
+   <path class="wire" d="M355 180 V195"/>
+   <path class="parasitic" d="M355 195 l-8 5 l16 8 l-16 8 l16 8 l-16 8 l8 5"/>
+   <text x="335" y="220" text-anchor="end" style="fill:#ac0012;font-weight:600">Rl = ${fmt(m.Rl*1e3,1)} mΩ</text>
+   <path class="wire" d="M355 237 V260"/>
+   <path class="wire" d="M355 110 H445"/>
+   <polygon points="475,98 475,122 445,110" class="comp"/>
+   <line x1="445" y1="96" x2="445" y2="124" class="comp"/>
+   <text x="460" y="86" text-anchor="middle" style="fill:#b27300;font-weight:600">D · (1−d)Ts</text>
+   <path class="wire" d="M475 110 H585"/>
+   <path class="wire" d="M585 110 V148"/>
+   <line x1="567" y1="148" x2="603" y2="148" class="accent"/>
+   <line x1="567" y1="158" x2="603" y2="158" class="accent"/>
+   <text x="555" y="157" text-anchor="end" style="fill:#179eae;font-weight:700">C = ${fmt(m.C*1e6,1)} µF</text>
+   <path class="wire" d="M585 158 V182"/>
+   <path class="parasitic" d="M585 182 l-8 5 l16 9 l-16 9 l16 9 l-16 9 l8 5"/>
+   <text x="567" y="210" text-anchor="end" style="fill:#ac0012;font-weight:600">Rc = ${fmt(m.Rc*1e3,1)} mΩ</text>
+   <path class="wire" d="M585 228 V260"/>
+   <path class="wire" d="M585 110 H745 V150"/>
+   <path class="comp" d="M745 150 l-9 7 l18 12 l-18 12 l18 12 l-18 12 l9 7"/>
+   <path class="wire" d="M745 212 V260"/>
+   <text x="764" y="172" style="fill:#18a660;font-weight:700">R = ${fmt(m.R,2)} Ω</text>
+   <text x="764" y="191" style="fill:#124385;font-weight:600">Vo = −${fmt(m.Vo,1)} V</text>
+   <text x="764" y="209" style="fill:#6f8266">Io = ${fmt(m.Io,3)} A</text>`;
+ }
+
+ let footerSvg = `<text x="24" y="318" style="fill:#6f8266;font-size:12px">State vector x = [iL, vC]ᵀ · Duty D = ${fmt(m.D,4)} </text><text x="24" y="338" style="fill:#566a50;font-size:12px">Voltage divider factor a = R/(R+Rc) = ${fmt(m.a,5)} · Quality factor Q = ${fmt(m.Qfactor,3)} · Capacitor ESR Zero fesr = ${Number.isFinite(m.fesr)?fmt(m.fesr,1)+" Hz":"∞"}</text>`;
+
+ s.innerHTML = commonDefs + bodySvg + footerSvg;
+
+ $("opEq").textContent=`${m.dcLabel}.  P = ${fmt(m.P,2)} W ⇒ Io = P/Vo = ${fmt(m.Io,4)} A, Iin = P/Vin = ${fmt(m.Iin,4)} A, R = Vo²/P = ${fmt(m.R,4)} Ω.  D = ${fmt(m.D,5)}; IL,avg = ${fmt(m.IL,4)} A.  f0 = ${fmt(m.f0,2)} Hz (Q = ${fmt(m.Qfactor,3)}).  ${Number.isFinite(m.rhp)?`fRHP = ${fmt(m.rhp,2)} Hz. `:""}Capacitor ESR zero fesr = 1/(2π·C·Rc) = ${Number.isFinite(m.fesr)?fmt(m.fesr,2)+" Hz":"∞ (Rc = 0)"}.`;
+
+ $("stateMatricesEq").innerHTML = `<b style="color:var(--amber)">Averaged State-Space Model:</b><br>` +
+   `A = [ [${fmtSci(m.A[0][0],4)}, ${fmtSci(m.A[0][1],4)}], [${fmtSci(m.A[1][0],4)}, ${fmtSci(m.A[1][1],4)}] ]<br>` +
+   `f = (A₁−A₂)X + (b₁−b₂)Vg = [ ${fmtSci(m.fVec[0],4)}, ${fmtSci(m.fVec[1],4)} ]ᵀ<br>` +
+   `b = [ ${fmtSci(m.Bg[0],4)}, ${fmtSci(m.Bg[1],4)} ]ᵀ  |  q = [ ${fmtSci(m.q[0],4)}, ${fmtSci(m.q[1],4)} ]`;
+}
+
+function bodeData(tf, minF=1,maxF){
+  let fs=num("fs")*1000,sw=num("fsw")*1000;
+  maxF=maxF||Math.min(1e6,Math.max(10000,Math.min(sw*5,fs*0.48)));
+  let f=[],mag=[],ph=[];
+  for(let i=0;i<600;i++){
+    let x=Math.log10(minF)+(Math.log10(maxF)-Math.log10(minF))*i/599,fr=10**x,H=tfEval(tf,c(0,2*Math.PI*fr));
+    f.push(fr);mag.push(20*Math.log10(Math.max(abs(H),1e-16)));ph.push(phase(H));
+  }
+  for(let i=1;i<ph.length;i++){
+    while(ph[i]-ph[i-1]>180)ph[i]-=360;
+    while(ph[i]-ph[i-1]<-180)ph[i]+=360;
+  }
+  return {f,mag,ph};
+}
+
+function unwrappedPhaseAt(tf, targetF){
+  let b = bodeData(tf, 0.5, Math.max(targetF*5, 10000));
+  for(let i=1;i<b.f.length;i++){
+    if(b.f[i]>=targetF){
+      let q = (Math.log10(targetF)-Math.log10(b.f[i-1]))/(Math.log10(b.f[i])-Math.log10(b.f[i-1]));
+      return b.ph[i-1] + q*(b.ph[i]-b.ph[i-1]);
+    }
+  }
+  return phase(tfEval(tf,c(0,2*Math.PI*targetF)));
+}
+
+function renderBode(id,tf,title){
+  let b=bodeData(tf);
+  let traces=[
+    {x:b.f,y:b.mag,name:"Magnitude (dB)",xaxis:"x",yaxis:"y",type:"scatter",mode:"lines",line:{color:"#179eae",width:2}},
+    {x:b.f,y:b.ph,name:"Phase (deg)",xaxis:"x2",yaxis:"y2",type:"scatter",mode:"lines",line:{color:"#b27300",width:2}}
+  ];
+  Plotly.newPlot(id,traces,{title:{text:title,font:{color:"#0f4186",size:13}},paper_bgcolor:"#d9e1f2",plot_bgcolor:"#d9e1f2",font:{color:"#54624d",size:11},margin:{l:52,r:20,t:40,b:42},grid:{rows:2,columns:1,pattern:"independent"},xaxis:{type:"log",title:"Frequency (Hz)",gridcolor:"#c6d8b8"},xaxis2:{type:"log",title:"Frequency (Hz)",gridcolor:"#c6d8b8"},yaxis:{title:"Magnitude (dB)",gridcolor:"#c6d8b8"},yaxis2:{title:"Phase (deg)",gridcolor:"#c6d8b8"},showlegend:false},{responsive:true,displaylogo:false});
+  return b;
+}
+
+function rootsPoly(p){
+  let clean = p.slice();
+  while(clean.length>1 && Math.abs(clean[0])<1e-24) clean.shift();
+  if(clean.length===2){
+    return [c(-clean[1]/clean[0], 0)];
+  }
+  if(clean.length===3){
+    let [a,b,c0]=clean,disc=b*b-4*a*c0;
+    if(disc>=0)return [c((-b+Math.sqrt(disc))/(2*a)),c((-b-Math.sqrt(disc))/(2*a))];
+    return [c(-b/(2*a),Math.sqrt(-disc)/(2*a)),c(-b/(2*a),-Math.sqrt(-disc)/(2*a))];
+  }
+  return [];
+}
+
+function renderPole(id,tf){
+  let r=rootsPoly(tf.den), zeros=rootsPoly(tf.num);
+  Plotly.newPlot(id,[
+    {x:r.map(z=>z.re),y:r.map(z=>z.im),mode:"markers",type:"scatter",name:"Poles",marker:{size:12,color:"#ac0012",symbol:"x"}},
+    {x:zeros.map(z=>z.re),y:zeros.map(z=>z.im),mode:"markers",type:"scatter",name:"Zeros",marker:{size:11,color:"#179eae",symbol:"circle-open"}}
+  ],{title:{text:"Plant Pole-Zero Map (rad/s) — includes ESR zero & RHP zero",font:{color:"#0f4186",size:13}},paper_bgcolor:"#d9e1f2",plot_bgcolor:"#d9e1f2",font:{color:"#54624d"},margin:{l:50,r:20,t:40,b:40},xaxis:{title:"Real (rad/s)",gridcolor:"#c6d8b8",zerolinecolor:"#75849a"},yaxis:{title:"Imaginary (rad/s)",gridcolor:"#c6d8b8",zerolinecolor:"#75849a"},showlegend:true},{responsive:true,displaylogo:false});
+}
+
+function rawController(type,K,z1,z2,p1,p2){
+ let w1=2*Math.PI*Math.max(1e-3, Math.abs(z1)),
+     w2=2*Math.PI*Math.max(1e-3, Math.abs(z2)),
+     wp1=2*Math.PI*Math.max(1e-3, Math.abs(p1)),
+     wp2=2*Math.PI*Math.max(1e-3, Math.abs(p2));
+ if(type==="p")return {num:[K],den:[1]};
+ if(type==="pi")return {num:[K/w1,K],den:[1,0]};
+ if(type==="type2")return {num:[K/w1,K],den:conv([1,0],[1/wp1,1])};
+ if(type==="type3")return {num:[K/(w1*w2),K*(1/w1+1/w2),K],den:conv([1,0],conv([1/wp1,1],[1/wp2,1]))};
+ if(type==="lead"||type==="lag")return {num:[K/w1,K],den:[1/wp1,1]};
+ if(type==="pid")return {num:[K/(w1*w2),K*(1/w1+1/w2),K],den:conv([1,0],[1/wp1,1])};
+ return {num:[K],den:[1]};
+}
+
+function gainAt(tf,f){return abs(tfEval(tf,c(0,2*Math.PI*f)))}
+
+function analyzeLoopMargins(loopTf, targetFc){
+  let b = bodeData(loopTf, 0.5, Math.max(targetFc*25, num("fsw")*5000, 100000));
+  let gainCrossings = [];
+  for(let i=1;i<b.f.length;i++){
+    if((b.mag[i-1]>=0 && b.mag[i]<0) || (b.mag[i-1]<=0 && b.mag[i]>0)){
+      let a=b.mag[i-1], bb=b.mag[i], q=(0-a)/(bb-a);
+      let fc = 10**(Math.log10(b.f[i-1])+q*(Math.log10(b.f[i])-Math.log10(b.f[i-1])));
+      let ph = b.ph[i-1] + q*(b.ph[i]-b.ph[i-1]);
+      let pm = 180 + ph;
+      gainCrossings.push({fc, pm, ph});
+    }
+  }
+  let phaseCrossings = [];
+  for(let i=1;i<b.f.length;i++){
+    let p1 = b.ph[i-1], p2 = b.ph[i];
+    if((p1 >= -180 && p2 < -180) || (p1 <= -180 && p2 > -180)){
+      let q = (-180 - p1)/(p2 - p1);
+      let f180 = 10**(Math.log10(b.f[i-1])+q*(Math.log10(b.f[i])-Math.log10(b.f[i-1])));
+      let magAt180 = b.mag[i-1] + q*(b.mag[i]-b.mag[i-1]);
+      let gmDb = -magAt180;
+      phaseCrossings.push({f180, gmDb, magAt180});
+    }
+  }
+  return {gainCrossings, phaseCrossings, bode: b};
+}
+
+function getCompensatorPhaseBounds(type){
+  if(type === "type3" || type === "pid"){
+    return {minCompPhase: -90 + 1, maxCompPhase: -90 + 172, minBoost: 1, maxBoost: 172, hasIntegrator: true};
+  }
+  if(type === "type2"){
+    return {minCompPhase: -90 + 0.5, maxCompPhase: -90 + 86, minBoost: 0.5, maxBoost: 86, hasIntegrator: true};
+  }
+  if(type === "pi"){
+    return {minCompPhase: -90 + 0.5, maxCompPhase: -90 + 88, minBoost: 0.5, maxBoost: 88, hasIntegrator: true};
+  }
+  if(type === "lead"){
+    return {minCompPhase: 0.5, maxCompPhase: 86, minBoost: 0.5, maxBoost: 86, hasIntegrator: false};
+  }
+  if(type === "lag"){
+    return {minCompPhase: -86, maxCompPhase: -0.5, minBoost: -86, maxBoost: -0.5, hasIntegrator: false};
+  }
+  return {minCompPhase: 0, maxCompPhase: 0, minBoost: 0, maxBoost: 0, hasIntegrator: false};
+}
+
+function synthesizeCompensatorParameters(plant, type, freq, pmTarget, showAlert=true){
+  let pPhase = unwrappedPhaseAt(plant, freq);
+  let bounds = getCompensatorPhaseBounds(type);
+
+  let pmMinPossible = 180 + pPhase + bounds.minCompPhase;
+  let pmMaxPossible = 180 + pPhase + bounds.maxCompPhase;
+
+  if(pmMaxPossible <= 0){
+    $("pmRangeHint").style.color = "var(--red)";
+    $("pmRangeHint").textContent = `⛔ Unstable at fc = ${fmt(freq,1)} Hz! Max possible PM is ${fmt(pmMaxPossible,1)}° (≤ 0°). Reduce crossover frequency.`;
+  } else {
+    $("pmRangeHint").style.color = "var(--cyan)";
+    $("pmRangeHint").textContent = `✓ Achievable positive PM at ${fmt(freq,1)} Hz (${type.toUpperCase()}): [${fmt(Math.max(2, pmMinPossible),1)}° to ${fmt(pmMaxPossible,1)}°]`;
+  }
+
+  let fz1 = Math.abs(num("fz1")) || 250,
+      fz2 = Math.abs(num("fz2")) || 350,
+      fp1 = Math.abs(num("fp1")) || 5000,
+      fp2 = Math.abs(num("fp2")) || 8000;
+  let statusMsg = "";
+  let clamped = false;
+  let unstable = false;
+
+  if(pmMaxPossible <= 1.0){
+    unstable = true;
+    clamped = true;
+    statusMsg = `SYSTEM UNSTABLE AT f_c = ${fmt(freq,2)} Hz: Plant phase is ${fmt(pPhase,1)}°, so even with maximum ${type.toUpperCase()} phase boost, the maximum achievable Phase Margin is ${fmt(pmMaxPossible,1)}° (≤ 0°). Please reduce the target crossover frequency or select a higher-order compensator (e.g., Type-III).`;
+    if(showAlert){
+      showPmPopup(
+        `System Unstable at Crossover (${fmt(freq,1)} Hz)`,
+        `<p>At <b>f<sub>c</sub> = ${fmt(freq,2)} Hz</b>, the selected plant phase is <b>${fmt(pPhase,2)}°</b>.</p>
+         <ul>
+           <li>Compensator structure: <b>${type.toUpperCase()}</b></li>
+           <li>Maximum achievable Phase Margin at ${fmt(freq,1)} Hz: <b>${fmt(pmMaxPossible,2)}°</b> (≤ 0°, unstable)</li>
+           <li>Requested Phase Margin: <b>${fmt(pmTarget,2)}°</b></li>
+         </ul>
+         <p>No positive Phase Margin is physically attainable at this crossover frequency with <b>${type.toUpperCase()}</b>. Please <b>reduce the Target Crossover Frequency (Hz)</b> or switch to a compensator with higher phase boost.</p>`,
+        true
+      );
+    }
+  }
+
+  let effectivePm = pmTarget;
+  if(!unstable){
+    let minPositivePm = Math.max(5.0, pmMinPossible);
+    if(pmTarget > pmMaxPossible + 0.05){
+      effectivePm = pmMaxPossible;
+      clamped = true;
+      statusMsg = `Requested PM (${fmt(pmTarget,1)}°) exceeds maximum attainable PM at ${fmt(freq,1)} Hz for ${type.toUpperCase()}. Clamped to maximum achievable positive PM = ${fmt(effectivePm,2)}°.`;
+      if(showAlert){
+        showPmPopup(
+          `Target Phase Margin (${fmt(pmTarget,1)}°) Not Attainable at ${fmt(freq,1)} Hz`,
+          `<p>Your requested Phase Margin of <b>${fmt(pmTarget,2)}°</b> exceeds the physical phase-boost limit of the <b>${type.toUpperCase()}</b> compensator at <b>f<sub>c</sub> = ${fmt(freq,2)} Hz</b>.</p>
+           <ul>
+             <li>Plant phase at ${fmt(freq,1)} Hz: <b>${fmt(pPhase,2)}°</b></li>
+             <li>Achievable positive PM range at ${fmt(freq,1)} Hz: <b>[${fmt(minPositivePm,2)}° to ${fmt(pmMaxPossible,2)}°]</b></li>
+             <li>Applied Phase Margin: <b>${fmt(effectivePm,2)}° (Maximum Achievable)</b></li>
+           </ul>
+           <p>If you require a higher Phase Margin, please adjust the crossover frequency or select Type-III.</p>`,
+          false
+        );
+      }
+    } else if(pmTarget < minPositivePm - 0.05){
+      effectivePm = minPositivePm;
+      clamped = true;
+      statusMsg = `Requested PM (${fmt(pmTarget,1)}°) is below the minimum positive PM boundary (${fmt(minPositivePm,2)}°) of ${type.toUpperCase()} at ${fmt(freq,1)} Hz. Clamped to minimum achievable positive PM = ${fmt(effectivePm,2)}°.`;
+      if(showAlert){
+        showPmPopup(
+          `Target Phase Margin (${fmt(pmTarget,1)}°) Below Minimum Achievable at ${fmt(freq,1)} Hz`,
+          `<p>At <b>f<sub>c</sub> = ${fmt(freq,2)} Hz</b>, the plant phase is <b>${fmt(pPhase,2)}°</b>, so a <b>${type.toUpperCase()}</b> compensator with Left-Half-Plane poles/zeros (f<sub>z</sub> &lt; f<sub>c</sub> &lt; f<sub>p</sub>) naturally provides at least <b>${fmt(minPositivePm,2)}°</b> of Phase Margin.</p>
+           <ul>
+             <li>Requested Phase Margin: <b>${fmt(pmTarget,2)}°</b></li>
+             <li>Achievable positive PM range at ${fmt(freq,1)} Hz: <b>[${fmt(minPositivePm,2)}° to ${fmt(pmMaxPossible,2)}°]</b></li>
+             <li>Applied Phase Margin: <b>${fmt(effectivePm,2)}° (Minimum Achievable Positive PM)</b></li>
+           </ul>`,
+          false
+        );
+      }
+    }
+  } else {
+    effectivePm = pmMaxPossible;
+  }
+
+  if(type === "type3" || type === "pid"){
+    let boost = Math.max(bounds.minBoost, Math.min(bounds.maxBoost, effectivePm - pPhase - 90));
+    let k = Math.tan(((boost / 4) + 45) * Math.PI / 180);
+    fz1 = freq / k;
+    fz2 = freq / k;
+    fp1 = freq * k;
+    fp2 = freq * k;
+  } else if(type === "type2"){
+    let boost = Math.max(bounds.minBoost, Math.min(bounds.maxBoost, effectivePm - pPhase - 90));
+    let k = Math.tan(((boost / 2) + 45) * Math.PI / 180);
+    fz1 = freq / k;
+    fp1 = freq * k;
+  } else if(type === "lead" || type === "lag"){
+    let compPhase = Math.max(bounds.minBoost, Math.min(bounds.maxBoost, effectivePm - 180 - pPhase));
+    let k = Math.tan(((compPhase / 2) + 45) * Math.PI / 180);
+    fz1 = freq / k;
+    fp1 = freq * k;
+  } else if(type === "pi"){
+    let boost = Math.max(bounds.minBoost, Math.min(bounds.maxBoost, effectivePm - pPhase - 90));
+    fz1 = freq / Math.tan(boost * Math.PI / 180);
+  }
+
+  fz1 = Math.max(0.01, Math.abs(fz1));
+  fz2 = Math.max(0.01, Math.abs(fz2));
+  fp1 = Math.max(0.01, Math.abs(fp1));
+  fp2 = Math.max(0.01, Math.abs(fp2));
+
+  $("fz1").value = Number(fz1.toFixed(2));
+  $("fz2").value = Number(fz2.toFixed(2));
+  $("fp1").value = Number(fp1.toFixed(2));
+  $("fp2").value = Number(fp2.toFixed(2));
+
+  return {fz1, fz2, fp1, fp2, clamped, unstable, statusMsg, pPhase, effectivePm, pmMinPossible, pmMaxPossible};
+}
+
+function estimateOvershootFromPm(pmDeg){
+  if(!Number.isFinite(pmDeg) || pmDeg <= 0) return "Unstable";
+  const zeta = Math.max(0.01, Math.min(0.99, pmDeg / 92));
+  const mp = 100 * Math.exp((-Math.PI * zeta) / Math.sqrt(1 - zeta*zeta));
+  return `${fmt(mp,1)}% (ζ≈${fmt(zeta,2)})`;
+}
+
+function calculateDesign(showAlert=true){
+ if(!state.selected) state.selected = plantModels();
+ let plant=selectedPlant(state.selected),type=$("ctype").value,target=num("fc"),sense=num("sense"),pmTarget=num("pm");
+ const arch = $("arch").value, plantKey = $("plant").value;
+ const isCascadedOuter = (arch === "cascade" && plantKey === "vi");
+ plant = v2dyn(plant,isCascadedOuter);
+
+ if(!(target>0&&sense>0))throw Error("Crossover and sensor gain must be positive.");
+ let freq=target;
+ if($("method").value==="auto"){
+   let fs=num("fs")*1000,sw=num("fsw")*1000,upper=Math.min(fs*.08,sw*.08,state.selected.rhp*.2,(isCascadedOuter?v2innerBW()/5:1e12));
+   if(!Number.isFinite(upper))upper=Math.min(fs*.08,sw*.08);
+   freq=Math.min(target,upper);
+   if(freq<=1)freq=Math.max(1,upper);
+   $("fc").value = Number(freq.toFixed(2));
+ }
+
+ let synthInfo = {clamped:false, unstable:false, statusMsg:""};
+ if($("method").value==="bode" || $("method").value==="auto"){
+   synthInfo = synthesizeCompensatorParameters(plant, type, freq, pmTarget, showAlert);
+ } else {
+   let pPhase = unwrappedPhaseAt(plant, freq);
+   let bounds = getCompensatorPhaseBounds(type);
+   let pmMinP = 180 + pPhase + bounds.minCompPhase;
+   let pmMaxP = 180 + pPhase + bounds.maxCompPhase;
+   $("pmRangeHint").textContent = `Manual mode · Achievable ${type.toUpperCase()} PM at ${fmt(freq,1)} Hz: [${fmt(Math.max(2,pmMinP),1)}° to ${fmt(pmMaxP,1)}°]`;
+ }
+
+ let fz1=Math.max(0.01, Math.abs(num("fz1"))),
+     fz2=Math.max(0.01, Math.abs(num("fz2"))),
+     fp1=Math.max(0.01, Math.abs(num("fp1"))),
+     fp2=Math.max(0.01, Math.abs(num("fp2")));
+
+ let base=rawController(type,1,fz1,fz2,fp1,fp2);
+ let gPlant=gainAt(plant,freq)*sense, gComp=gainAt(base,freq);
+ let K = ($("method").value==="manual") ? num("gain") : 1/Math.max(1e-30,gPlant*gComp);
+ if($("method").value!=="manual"){
+   $("gain").value = Number(K.toPrecision(6));
+ }
+
+ let comp = normalize(rawController(type,K,fz1,fz2,fp1,fp2));
+ let loop = tfMul(plant,comp);
+ loop.num = loop.num.map(x=>x*sense);
+
+ let margins = analyzeLoopMargins(loop, freq);
+ let chosenCross = margins.gainCrossings.length ? margins.gainCrossings.reduce((prev, curr)=>Math.abs(curr.fc - freq) < Math.abs(prev.fc - freq) ? curr : prev) : null;
+ let chosenGm = margins.phaseCrossings.length ? margins.phaseCrossings[0] : null;
+
+ state.comp={type,K,tf:comp,loop,fc:freq,plant,fz1,fz2,fp1,fp2,margins,chosenCross,chosenGm,isCascadedOuter};
+
+ let metaText = `Structure = <b>${type.toUpperCase()}</b> · K = <b>${fmtSci(K,6)}</b> · f<sub>z1</sub> = ${fmt(fz1,2)} Hz${(type==="type3"||type==="pid")?`, f<sub>z2</sub> = ${fmt(fz2,2)} Hz`:""}${(type!=="p"&&type!=="pi")?` · f<sub>p1</sub> = ${fmt(fp1,2)} Hz`:""}${type==="type3"?`, f<sub>p2</sub> = ${fmt(fp2,2)} Hz`:""}${isCascadedOuter?` · <span style="color:var(--green)">[Cascaded Outer Loop: Inner Current Loop Gain = 1]</span>`:""}`;
+ $("compEq").innerHTML = renderVerticalTF("G<sub>c</sub>(s)", comp.num, comp.den, "s", metaText);
+
+ $("contCoeff").innerHTML = renderVerticalTF("G<sub>c</sub>(s)", comp.num, comp.den, "s", `Design crossover f<sub>c</sub> = ${fmt(freq,2)} Hz · Low-frequency gain K = ${fmtSci(K,6)}`);
+
+ $("kFc").textContent = chosenCross ? fmt(chosenCross.fc,2)+" Hz" : "not found";
+ $("kPm").textContent = chosenCross ? fmt(chosenCross.pm,2)+"°" : "—";
+ $("kGm").textContent = chosenGm ? `${fmt(chosenGm.gmDb,2)} dB @ ${fmt(chosenGm.f180,1)} Hz` : "∞ (No −180° cross)";
+ $("kLoop").textContent = chosenCross ? estimateOvershootFromPm(chosenCross.pm) : "—";
+
+ let isUnstable = synthInfo.unstable || (chosenCross && chosenCross.pm <= 0);
+ let pmOk = chosenCross && chosenCross.pm > 0 && Math.abs(chosenCross.pm - pmTarget) <= 1.5 && !synthInfo.clamped;
+ $("designWarn").className = "status " + (isUnstable ? "error" : (pmOk ? "" : "warn"));
+ $("designWarn").textContent = `${synthInfo.statusMsg ? synthInfo.statusMsg + " " : ""}${isCascadedOuter ? "[Cascaded Outer Voltage Loop: Inner current loop modelled as Ti(s)=ωci/(s+ωci)] " : ""}Loop gain matched at ${fmt(freq,2)} Hz. Actual crossover: ${chosenCross?fmt(chosenCross.fc,2)+" Hz":"none"} with Phase Margin = ${chosenCross?fmt(chosenCross.pm,2)+"°":"N/A"} (Target: ${pmTarget}°). Gain Margin = ${chosenGm?fmt(chosenGm.gmDb,2)+" dB at "+fmt(chosenGm.f180,1)+" Hz":"∞ (phase does not cross −180°)"}.`;
+
+ let loopTitle = isCascadedOuter
+   ? "Outer Voltage Open-Loop Lv(s) = H_sense × Gc(s) × Gvi(s) × Ti(s)"
+   : "Open-loop L(s) = sensor × plant × compensator";
+ renderBode("loopBode",loop,loopTitle);
+
+ let b=margins.bode, mag=[], ph=[];
+ b.f.forEach(f=>{
+   let Lval=tfEval(loop,c(0,2*Math.PI*f));
+   let T=div(Lval,add(c(1),Lval));
+   mag.push(20*Math.log10(Math.max(abs(T),1e-16)));
+   ph.push(phase(T));
+ });
+ for(let i=1;i<ph.length;i++){
+   while(ph[i]-ph[i-1]>180)ph[i]-=360;
+   while(ph[i]-ph[i-1]<-180)ph[i]+=360;
+ }
+ let closedTitle = isCascadedOuter
+   ? "Closed-Loop Voltage Reference Tracking Response Vout(s) / Vref(s) [with inner loop Ti(s)]"
+   : "Closed-Loop Reference Tracking Response Vout(s) / Vref(s) = L(s) / (1 + L(s))";
+ Plotly.newPlot("closedPlot",[
+   {x:b.f,y:mag,type:"scatter",mode:"lines",name:"|Vout/Vref| (dB)",xaxis:"x",yaxis:"y",line:{color:"#18a660",width:2}},
+   {x:b.f,y:ph,type:"scatter",mode:"lines",name:"Phase (deg)",xaxis:"x2",yaxis:"y2",line:{color:"#002bad",width:1.8}}
+ ],{title:{text:closedTitle,font:{color:"#0f4186",size:13}},paper_bgcolor:"#d9e1f2",plot_bgcolor:"#d9e1f2",font:{color:"#54624d",size:11},margin:{l:52,r:20,t:40,b:40},grid:{rows:2,columns:1,pattern:"independent"},xaxis:{type:"log",title:"Frequency (Hz)",gridcolor:"#c6d8b8"},xaxis2:{type:"log",title:"Frequency (Hz)",gridcolor:"#c6d8b8"},yaxis:{title:"Magnitude (dB)",gridcolor:"#c6d8b8"},yaxis2:{title:"Phase (deg)",gridcolor:"#c6d8b8"},showlegend:false},{responsive:true,displaylogo:false});
+
+ state.bode=b;
+ updateAnalogHardwareTab();
+ updateReport();
+}
+
+const E96_DECADE = [1.00,1.02,1.05,1.07,1.10,1.13,1.15,1.18,1.21,1.24,1.27,1.30,1.33,1.37,1.40,1.43,1.47,1.50,1.54,1.58,1.62,1.65,1.69,1.74,1.78,1.82,1.87,1.91,1.96,2.00,2.05,2.10,2.15,2.21,2.26,2.32,2.37,2.43,2.49,2.55,2.61,2.67,2.74,2.80,2.87,2.94,3.01,3.09,3.16,3.24,3.32,3.40,3.48,3.57,3.65,3.74,3.83,3.92,4.02,4.12,4.22,4.32,4.42,4.53,4.64,4.75,4.87,4.99,5.11,5.23,5.36,5.49,5.62,5.76,5.90,6.04,6.19,6.34,6.49,6.65,6.81,6.98,7.15,7.32,7.50,7.68,7.87,8.06,8.25,8.45,8.66,8.87,9.09,9.31,9.53,9.76];
+const E24_DECADE = [1.0,1.1,1.2,1.3,1.5,1.6,1.8,2.0,2.2,2.4,2.7,3.0,3.3,3.6,3.9,4.3,4.7,5.1,5.6,6.2,6.8,7.5,8.2,9.1];
+
+function nearestStandard(val, series){
+  if(!Number.isFinite(val) || val <= 0) return 0;
+  const exp = Math.floor(Math.log10(val));
+  const mant = val / Math.pow(10, exp);
+  let best = series[0], minDiff = Infinity;
+  for(const s of series){
+    const d = Math.abs(s - mant);
+    if(d < minDiff){ minDiff = d; best = s; }
+  }
+  return best * Math.pow(10, exp);
+}
+
+function fmtResistor(ohms){
+  if(!Number.isFinite(ohms) || ohms <= 0) return "—";
+  if(ohms >= 1e6) return `${fmt(ohms/1e6, 3)} MΩ`;
+  if(ohms >= 1e3) return `${fmt(ohms/1e3, 3)} kΩ`;
+  return `${fmt(ohms, 3)} Ω`;
+}
+
+function fmtCapacitor(farads){
+  if(!Number.isFinite(farads) || farads <= 0) return "—";
+  if(farads >= 1e-6) return `${fmt(farads*1e6, 3)} µF`;
+  if(farads >= 1e-9) return `${fmt(farads*1e9, 3)} nF`;
+  return `${fmt(farads*1e12, 3)} pF`;
+}
+
+function updateAnalogHardwareTab(){
+  if(!state.comp || !state.selected) return;
+  const c = state.comp;
+  const m = state.selected;
+  const type = c.type;
+  const Vp = Math.max(0.1, num("vramp"));
+  const arch = $("arch").value, plantKey = $("plant").value;
+  const isCascadedOuter = (arch === "cascade" && plantKey === "vi");
+  const VpEff = isCascadedOuter ? 1.0 : Vp;
+  const Kop = c.K * VpEff;
+
+  const R1 = Math.max(100, num("opR1") * 1e3);
+  const Vref = Math.max(0.1, num("opVref"));
+  const wz1 = 2 * Math.PI * c.fz1;
+  const wz2 = 2 * Math.PI * c.fz2;
+  const wp1 = 2 * Math.PI * c.fp1;
+  const wp2 = 2 * Math.PI * c.fp2;
+
+  const Rfb2 = (m.Vo > Vref) ? (R1 * Vref / (m.Vo - Vref)) : Infinity;
+
+  let bom = [];
+  bom.push({
+    name: "R1",
+    role: "Input resistor from sensed feedback node",
+    exact: fmtResistor(R1),
+    std: fmtResistor(nearestStandard(R1, E96_DECADE)) + " (E96 1%)",
+    formula: "User-selected base impedance R₁"
+  });
+  if(Number.isFinite(Rfb2)){
+    bom.push({
+      name: "R_bias",
+      role: `Bottom divider resistor to set Vref = ${Vref}V from Vo = ${m.Vo}V`,
+      exact: fmtResistor(Rfb2),
+      std: fmtResistor(nearestStandard(Rfb2, E96_DECADE)) + " (E96 1%)",
+      formula: "R_bias = R₁ · Vref / (Vo − Vref)"
+    });
+  }
+
+  let R2=0, R3=0, C1=0, C2=0, C3=0;
+  let zfFracHtml="", zinFracHtml="", gcSymFracHtml="";
+
+  if(type === "type3"){
+    const Csum = 1 / (Kop * R1);
+    const ratio = wz1 / wp1;
+    C2 = Csum * Math.min(0.48, ratio);
+    C1 = Math.max(1e-12, Csum - C2);
+    R2 = 1 / (wz1 * C1);
+    R3 = R1 / Math.max(0.05, (wp2 / wz2) - 1);
+    C3 = 1 / (wp2 * R3);
+
+    zfFracHtml = renderSymbolicFrac("Z<sub>f</sub>(s)", "1 + s·R<sub>2</sub>·C<sub>1</sub>", "s·(C<sub>1</sub> + C<sub>2</sub>) · (1 + s·R<sub>2</sub>·[C<sub>1</sub>C<sub>2</sub>/(C<sub>1</sub>+C<sub>2</sub>)])");
+    zinFracHtml = renderSymbolicFrac("Z<sub>in</sub>(s)", "R<sub>1</sub> · (1 + s·R<sub>3</sub>·C<sub>3</sub>)", "1 + s·(R<sub>1</sub> + R<sub>3</sub>)·C<sub>3</sub>");
+    gcSymFracHtml = renderSymbolicFrac("G<sub>c,opamp</sub>(s) = <span style='color:#123980'>Z<sub>f</sub>(s) / Z<sub>in</sub>(s)</span>", "(1 + s·R<sub>2</sub>·C<sub>1</sub>) · (1 + s·(R<sub>1</sub> + R<sub>3</sub>)·C<sub>3</sub>)", "s·R<sub>1</sub>·(C<sub>1</sub> + C<sub>2</sub>) · (1 + s·R<sub>2</sub>·[C<sub>1</sub>C<sub>2</sub>/(C<sub>1</sub>+C<sub>2</sub>)]) · (1 + s·R<sub>3</sub>·C<sub>3</sub>)");
+
+    bom.push(
+      {name:"R2", role:"Feedback zero resistor (sets fz1 with C1)", exact:fmtResistor(R2), std:fmtResistor(nearestStandard(R2,E96_DECADE))+" (E96)", formula:"R₂ = 1 / (2π·fz1·C₁)"},
+      {name:"C1", role:"Feedback series integrator/zero capacitor", exact:fmtCapacitor(C1), std:fmtCapacitor(nearestStandard(C1,E24_DECADE))+" (E24)", formula:"C₁ + C₂ = 1/(K_op·R₁), C₁ = C_sum − C₂"},
+      {name:"C2", role:"Feedback HF pole parallel capacitor (sets fp1)", exact:fmtCapacitor(C2), std:fmtCapacitor(nearestStandard(C2,E24_DECADE))+" (E24)", formula:"C₂ = 1 / (2π·fp1·R₂)"},
+      {name:"R3", role:"Input lead-network series resistor (sets fp2)", exact:fmtResistor(R3), std:fmtResistor(nearestStandard(R3,E96_DECADE))+" (E96)", formula:"R₃ = R₁ / ((fp2 / fz2) − 1)"},
+      {name:"C3", role:"Input lead-network series capacitor (sets fz2 & fp2)", exact:fmtCapacitor(C3), std:fmtCapacitor(nearestStandard(C3,E24_DECADE))+" (E24)", formula:"C₃ = 1 / (2π·fp2·R₃)"}
+    );
+  } else if(type === "type2"){
+    const Csum = 1 / (Kop * R1);
+    const ratio = wz1 / wp1;
+    C2 = Csum * Math.min(0.48, ratio);
+    C1 = Math.max(1e-12, Csum - C2);
+    R2 = 1 / (wz1 * C1);
+
+    zfFracHtml = renderSymbolicFrac("Z<sub>f</sub>(s)", "1 + s·R<sub>2</sub>·C<sub>1</sub>", "s·(C<sub>1</sub> + C<sub>2</sub>) · (1 + s·R<sub>2</sub>·[C<sub>1</sub>C<sub>2</sub>/(C<sub>1</sub>+C<sub>2</sub>)])");
+    zinFracHtml = renderSymbolicFrac("Z<sub>in</sub>(s)", "R<sub>1</sub>", "1");
+    gcSymFracHtml = renderSymbolicFrac("G<sub>c,opamp</sub>(s) = <span style='color:#123980'>Z<sub>f</sub>(s) / Z<sub>in</sub>(s)</span>", "1 + s·R<sub>2</sub>·C<sub>1</sub>", "s·R<sub>1</sub>·(C<sub>1</sub> + C<sub>2</sub>) · (1 + s·R<sub>2</sub>·[C<sub>1</sub>C<sub>2</sub>/(C<sub>1</sub>+C<sub>2</sub>)])");
+
+    bom.push(
+      {name:"R2", role:"Feedback zero resistor (sets fz1 with C1)", exact:fmtResistor(R2), std:fmtResistor(nearestStandard(R2,E96_DECADE))+" (E96)", formula:"R₂ = 1 / (2π·fz1·C₁)"},
+      {name:"C1", role:"Feedback series capacitor (integrator + zero)", exact:fmtCapacitor(C1), std:fmtCapacitor(nearestStandard(C1,E24_DECADE))+" (E24)", formula:"C₁ + C₂ = 1/(K_op·R₁)"},
+      {name:"C2", role:"Feedback HF pole parallel capacitor (sets fp1)", exact:fmtCapacitor(C2), std:fmtCapacitor(nearestStandard(C2,E24_DECADE))+" (E24)", formula:"C₂ = 1 / (2π·fp1·R₂)"}
+    );
+  } else if(type === "pi"){
+    C1 = 1 / (Kop * R1);
+    R2 = 1 / (wz1 * C1);
+
+    zfFracHtml = renderSymbolicFrac("Z<sub>f</sub>(s)", "1 + s·R<sub>2</sub>·C<sub>1</sub>", "s·C<sub>1</sub>");
+    zinFracHtml = renderSymbolicFrac("Z<sub>in</sub>(s)", "R<sub>1</sub>", "1");
+    gcSymFracHtml = renderSymbolicFrac("G<sub>c,opamp</sub>(s) = <span style='color:#123980'>Z<sub>f</sub>(s) / Z<sub>in</sub>(s)</span>", "1 + s·R<sub>2</sub>·C<sub>1</sub>", "s·R<sub>1</sub>·C<sub>1</sub>");
+
+    bom.push(
+      {name:"R2", role:"Proportional feedback resistor (sets fz1 with C1)", exact:fmtResistor(R2), std:fmtResistor(nearestStandard(R2,E96_DECADE))+" (E96)", formula:"R₂ = K_op·R₁ / (2π·fz1)"},
+      {name:"C1", role:"Series integral feedback capacitor", exact:fmtCapacitor(C1), std:fmtCapacitor(nearestStandard(C1,E24_DECADE))+" (E24)", formula:"C₁ = 1 / (K_op·R₁)"}
+    );
+  } else if(type === "lead" || type === "lag"){
+    R2 = Kop * R1;
+    C2 = 1 / (wp1 * R2);
+    C1 = 1 / (wz1 * R1);
+
+    zfFracHtml = renderSymbolicFrac("Z<sub>f</sub>(s)", "R<sub>2</sub>", "1 + s·R<sub>2</sub>·C<sub>2</sub>");
+    zinFracHtml = renderSymbolicFrac("Z<sub>in</sub>(s)", "R<sub>1</sub>", "1 + s·R<sub>1</sub>·C<sub>1</sub>");
+    gcSymFracHtml = renderSymbolicFrac("G<sub>c,opamp</sub>(s) = <span style='color:#123980'>Z<sub>f</sub>(s) / Z<sub>in</sub>(s)</span>", "R<sub>2</sub> · (1 + s·R<sub>1</sub>·C<sub>1</sub>)", "R<sub>1</sub> · (1 + s·R<sub>2</sub>·C<sub>2</sub>)");
+
+    bom.push(
+      {name:"R2", role:"DC gain feedback resistor", exact:fmtResistor(R2), std:fmtResistor(nearestStandard(R2,E96_DECADE))+" (E96)", formula:"R₂ = K_op · R₁"},
+      {name:"C1", role:"Input zero capacitor across R1 (sets fz1)", exact:fmtCapacitor(C1), std:fmtCapacitor(nearestStandard(C1,E24_DECADE))+" (E24)", formula:"C₁ = 1 / (2π·fz1·R₁)"},
+      {name:"C2", role:"Feedback pole capacitor across R2 (sets fp1)", exact:fmtCapacitor(C2), std:fmtCapacitor(nearestStandard(C2,E24_DECADE))+" (E24)", formula:"C₂ = 1 / (2π·fp1·R₂)"}
+    );
+  } else if(type === "pid"){
+    C1 = 1 / (Kop * R1);
+    R2 = 1 / (wz1 * C1);
+    R3 = R1 / Math.max(0.05, (wp1 / wz2) - 1);
+    C3 = 1 / (wp1 * R3);
+
+    zfFracHtml = renderSymbolicFrac("Z<sub>f</sub>(s)", "1 + s·R<sub>2</sub>·C<sub>1</sub>", "s·C<sub>1</sub>");
+    zinFracHtml = renderSymbolicFrac("Z<sub>in</sub>(s)", "R<sub>1</sub> · (1 + s·R<sub>3</sub>·C<sub>3</sub>)", "1 + s·(R<sub>1</sub> + R<sub>3</sub>)·C<sub>3</sub>");
+    gcSymFracHtml = renderSymbolicFrac("G<sub>c,opamp</sub>(s) = <span style='color:#123980'>Z<sub>f</sub>(s) / Z<sub>in</sub>(s)</span>", "(1 + s·R<sub>2</sub>·C<sub>1</sub>) · (1 + s·(R<sub>1</sub> + R<sub>3</sub>)·C<sub>3</sub>)", "s·R<sub>1</sub>·C<sub>1</sub> · (1 + s·R<sub>3</sub>·C<sub>3</sub>)");
+
+    bom.push(
+      {name:"R2", role:"Feedback zero resistor (sets fz1)", exact:fmtResistor(R2), std:fmtResistor(nearestStandard(R2,E96_DECADE))+" (E96)", formula:"R₂ = 1 / (2π·fz1·C₁)"},
+      {name:"C1", role:"Feedback integral capacitor", exact:fmtCapacitor(C1), std:fmtCapacitor(nearestStandard(C1,E24_DECADE))+" (E24)", formula:"C₁ = 1 / (K_op·R₁)"},
+      {name:"R3", role:"Input derivative damping resistor (sets fp1)", exact:fmtResistor(R3), std:fmtResistor(nearestStandard(R3,E96_DECADE))+" (E96)", formula:"R₃ = R₁ / ((fp1/fz2) − 1)"},
+      {name:"C3", role:"Input derivative capacitor (sets fz2)", exact:fmtCapacitor(C3), std:fmtCapacitor(nearestStandard(C3,E24_DECADE))+" (E24)", formula:"C₃ = 1 / (2π·fp1·R₃)"}
+    );
+  } else {
+    R2 = Kop * R1;
+    zfFracHtml = renderSymbolicFrac("Z<sub>f</sub>(s)", "R<sub>2</sub>", "1");
+    zinFracHtml = renderSymbolicFrac("Z<sub>in</sub>(s)", "R<sub>1</sub>", "1");
+    gcSymFracHtml = renderSymbolicFrac("G<sub>c,opamp</sub>(s) = <span style='color:#123980'>Z<sub>f</sub>(s) / Z<sub>in</sub>(s)</span>", "R<sub>2</sub>", "R<sub>1</sub>");
+
+    bom.push(
+      {name:"R2", role:"Feedback proportional resistor", exact:fmtResistor(R2), std:fmtResistor(nearestStandard(R2,E96_DECADE))+" (E96)", formula:"R₂ = K_op · R₁"}
+    );
+  }
+
+  const opNumCoeffs = c.tf.num.map(x => x * VpEff);
+  const opDenCoeffs = c.tf.den.slice();
+  const numVerticalTf = renderVerticalTF("G<sub>c,opamp</sub>(s) [Numerical]", opNumCoeffs, opDenCoeffs, "s");
+
+  state.analog = {type, R1, R2, R3, C1, C2, C3, Rfb2, Vref, Vp: VpEff, Kop, bom};
+  $("analogTfEq").innerHTML =
+    `<div style="font-weight:700;color:var(--amber);margin-bottom:6px">${type.toUpperCase()} Op-Amp Network Impedances &amp; S-Domain Transfer Function:</div>` +
+    `<div class="tf-row-grid">${zfFracHtml}${zinFracHtml}</div>` +
+    `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed #c6d8b8">${gcSymFracHtml}</div>` +
+    `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed #c6d8b8">${numVerticalTf}</div>` +
+    `<div class="tf-meta">PWM Modulator Gain G<sub>m</sub> = 1/V<sub>p</sub> = 1/${fmt(VpEff,2)} V⁻¹ · Op-Amp Gain Scale K<sub>opamp</sub> = K · V<sub>p</sub> = ${fmtSci(Kop,5)}</div>`;
+
+  $("analogBomTable").innerHTML = bom.map(r=>`<tr><td><b style="color:var(--cyan)">${r.name}</b></td><td>${r.role}</td><td><b>${r.exact}</b></td><td style="color:var(--green)">${r.std}</td><td class="small">${r.formula}</td></tr>`).join("");
+
+  drawAnalogOpAmpSchematic(state.analog);
+}
+
+function drawAnalogOpAmpSchematic(an){
+  const svg = $("analogSchematic");
+  const t = an.type;
+  const hasC2 = (t==="type3" || t==="type2" || t==="lead" || t==="lag");
+  const hasC1 = (t==="type3" || t==="type2" || t==="pi" || t==="pid");
+  const hasR3C3 = (t==="type3" || t==="pid");
+  const hasInputC1 = (t==="lead" || t==="lag");
+
+  svg.innerHTML = `
+  <defs>
+    <marker id="arrowAn" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#179cae"/></marker>
+  </defs>
+  <text x="22" y="26" style="font-weight:700;fill:#179eae;font-size:13px;letter-spacing:0.3px">ANALOG OP-AMP COMPENSATOR REALIZATION (${t.toUpperCase()})</text>
+
+  <circle cx="52" cy="210" r="4.5" fill="#179eae"/>
+  <text x="52" y="192" text-anchor="middle" style="fill:#179eae;font-weight:700">Vo_sense</text>
+  <path class="wire" d="M56 210 H110"/>
+
+  <path class="wire" d="M110 210 H145"/>
+  <path class="comp" d="M145 210 l5 -7 l9 14 l9 -14 l9 14 l9 -14 l5 7"/>
+  <text x="168" y="234" text-anchor="middle" style="fill:#b27300;font-weight:700">R1 = ${fmtResistor(an.R1)}</text>
+  <path class="wire" d="M191 210 H295"/>
+
+  ${hasR3C3 ? `
+  <path class="wire" d="M110 210 V142 H132"/>
+  <path class="comp" d="M132 142 l5 -7 l8 14 l8 -14 l8 14 l8 -14 l5 7"/>
+  <text x="153" y="124" text-anchor="middle" style="fill:#b27300;font-size:11.5px;font-weight:600">R3 = ${fmtResistor(an.R3)}</text>
+  <path class="wire" d="M174 142 H218"/>
+  <line x1="218" y1="128" x2="218" y2="156" class="accent"/>
+  <line x1="226" y1="128" x2="226" y2="156" class="accent"/>
+  <text x="228" y="120" text-anchor="middle" style="fill:#179eae;font-size:11.5px;font-weight:600">C3 = ${fmtCapacitor(an.C3)}</text>
+  <path class="wire" d="M226 142 H265 V210"/>
+  ` : ""}
+
+  ${hasInputC1 ? `
+  <path class="wire" d="M110 210 V142 H164"/>
+  <line x1="164" y1="128" x2="164" y2="156" class="accent"/>
+  <line x1="172" y1="128" x2="172" y2="156" class="accent"/>
+  <text x="168" y="120" text-anchor="middle" style="fill:#179eae;font-size:11.5px;font-weight:600">C1 = ${fmtCapacitor(an.C1)}</text>
+  <path class="wire" d="M172 142 H230 V210"/>
+  ` : ""}
+
+  <path class="wire" d="M295 210 V142 H345"/>
+  ${hasC1 ? `
+  <path class="comp" d="M345 142 l5 -7 l9 14 l9 -14 l9 14 l9 -14 l5 7"/>
+  <text x="368" y="166" text-anchor="middle" style="fill:#b27300;font-weight:700">R2 = ${fmtResistor(an.R2)}</text>
+  <path class="wire" d="M391 142 H445"/>
+  <line x1="445" y1="128" x2="445" y2="156" class="accent"/>
+  <line x1="453" y1="128" x2="453" y2="156" class="accent"/>
+  <text x="453" y="120" text-anchor="middle" style="fill:#179eae;font-weight:700">C1 = ${fmtCapacitor(an.C1)}</text>
+  <path class="wire" d="M453 142 H525 V230"/>
+  ` : `
+  <path class="comp" d="M380 142 l6 -8 l10 16 l10 -16 l10 16 l10 -16 l6 8"/>
+  <text x="406" y="166" text-anchor="middle" style="fill:#b27300;font-weight:700">R2 = ${fmtResistor(an.R2)}</text>
+  <path class="wire" d="M345 142 H380 M432 142 H525 V230"/>
+  `}
+
+  ${hasC2 ? `
+  <path class="wire" d="M295 142 V82 H406"/>
+  <line x1="406" y1="68" x2="406" y2="96" class="accent"/>
+  <line x1="414" y1="68" x2="414" y2="96" class="accent"/>
+  <text x="410" y="58" text-anchor="middle" style="fill:#179eae;font-weight:700">C2 = ${fmtCapacitor(an.C2)} (HF Pole)</text>
+  <path class="wire" d="M414 82 H525 V142"/>
+  ` : ""}
+
+  <path class="wire" d="M295 210 H355"/>
+  <polygon points="355,185 355,275 475,230" style="fill:#d9e4f2;stroke:#179eae;stroke-width:2.2"/>
+  <text x="364" y="215" style="fill:#ac0012;font-weight:700;font-size:15px">−</text>
+  <text x="364" y="255" style="fill:#18a660;font-weight:700;font-size:15px">+</text>
+  <text x="382" y="234" style="fill:#14418b;font-size:11.5px;font-weight:600">Error Amp</text>
+
+  <path class="wire" d="M355 250 H300 V284"/>
+  <circle cx="300" cy="304" r="20" class="accent" style="fill:#d9e2f2"/>
+  <text x="300" y="300" text-anchor="middle" style="fill:#18a660;font-weight:700;font-size:13.5px">+</text>
+  <text x="300" y="316" text-anchor="middle" style="fill:#ac0012;font-weight:700;font-size:14.5px">−</text>
+  <path class="wire" d="M300 324 V344 M287 344 H313 M291 349 H309 M296 354 H304"/>
+  <text x="328" y="303" style="fill:#18a660;font-weight:700;font-size:12.5px">Vref = ${fmt(an.Vref,2)} V</text>
+  <text x="328" y="319" style="fill:#6f8266;font-size:11px">(DC Reference Source)</text>
+
+  <path class="wire" d="M475 230 H605"/>
+  <text x="548" y="220" text-anchor="middle" style="fill:#179eae;font-weight:700">Vc(t)</text>
+
+  <polygon points="605,205 605,280 698,242" style="fill:#f6faf3;stroke:#b27300;stroke-width:2"/>
+  <text x="613" y="233" style="fill:#18a660;font-weight:700">+</text>
+  <text x="613" y="267" style="fill:#ac0012;font-weight:700">−</text>
+  <text x="626" y="247" style="fill:#b27300;font-size:11px;font-weight:600">PWM</text>
+  <path class="wire" d="M605 262 H565 V298"/>
+  <path class="comp" d="M542 316 L565 298 V316 L588 298 V316"/>
+  <text x="565" y="336" text-anchor="middle" style="fill:#b27300;font-size:11.5px;font-weight:600">Ramp Vp = ${fmt(an.Vp,2)} V (fs = ${fmt(num("fsw"),1)} kHz)</text>
+
+  <path class="accent" marker-end="url(#arrowAn)" d="M698 242 H795"/>
+  <text x="746" y="228" text-anchor="middle" style="fill:#18a660;font-weight:700">d(t) → Gate Drive</text>
+  `;
+}
+
+function discretize(){
+ if(!state.comp) calculateDesign(false);
+ const T=1/(num("fs")*1000), method=$("disc").value, tf=state.comp.tf;
+ let a=2/T;
+ if(method==="prewarp"){let w=2*Math.PI*num("prewarp");a=w/Math.tan(w*T/2)}
+ function power(p,n){let r=[1];for(let i=0;i<n;i++)r=conv(r,p);return r}
+ let n=tf.num.length-1, d=tf.den.length-1, N=Math.max(n,d);
+
+ function tustinPoly(poly,N){
+   let res=Array(N+1).fill(0);
+   poly.forEach((coef,i)=>{
+     let k=poly.length-1-i;
+     let term=conv(power([1,-1],k),power([1,1],N-k));
+     let scale=coef*Math.pow(a,k);
+     term.forEach((v,j)=>res[j]+=scale*v);
+   });
+   return res;
+ }
+ let nn,dd;
+ if(method==="tustin"||method==="prewarp"){
+   nn=tustinPoly(tf.num,N);
+   dd=tustinPoly(tf.den,N);
+ } else if(method==="backward"){
+   function backEulerPoly(poly,N){
+     let res=Array(N+1).fill(0);
+     poly.forEach((coef,i)=>{
+       let k=poly.length-1-i;
+       let term=conv(power([1,-1],k),[1].concat(Array(N-k).fill(0)));
+       let scale=coef/Math.pow(T,k);
+       term.forEach((v,j)=>res[j]+=scale*v);
+     });
+     return res;
+   }
+   nn=backEulerPoly(tf.num,N);
+   dd=backEulerPoly(tf.den,N);
+ } else {
+   function fwdEulerPoly(poly,N){
+     let res=Array(N+1).fill(0);
+     poly.forEach((coef,i)=>{
+       let k=poly.length-1-i;
+       let term= power([1,-1],k);
+       let pad = Array(N-k).fill(0).concat(term);
+       let scale=coef/Math.pow(T,k);
+       pad.forEach((v,j)=>res[j]+=scale*v);
+     });
+     return res;
+   }
+   nn=fwdEulerPoly(tf.num,N);
+   dd=fwdEulerPoly(tf.den,N);
+ }
+
+ let lead=dd[0];
+ if(Math.abs(lead)>1e-30){nn=nn.map(x=>x/lead);dd=dd.map(x=>x/lead)}
+ state.disc={num:nn,den:dd,T,method,order:N};
+
+ let bTerms = [], aTerms = [], coeffCards = [];
+ nn.forEach((val, i)=>{
+   bTerms.push(i===0 ? `b<sub>0</sub>·e[k]` : `b<sub>${i}</sub>·e[k−${i}]`);
+   coeffCards.push(`<div class="coeff-item"><b>b<sub>${i}</sub></b> = ${val.toExponential(6)}</div>`);
+ });
+ dd.forEach((val, i)=>{
+   if(i===0) return;
+   aTerms.push(`a<sub>${i}</sub>·u[k−${i}]`);
+   coeffCards.push(`<div class="coeff-item"><b>a<sub>${i}</sub></b> = ${val.toExponential(6)}</div>`);
+ });
+ let diffEqHtml = `<div style="margin-top:10px;padding-top:8px;border-top:1px dashed #c6d8b8;color:#123980"><b>Discrete-Time Difference Equation (with a<sub>0</sub> = 1):</b><br><span style="color:var(--green)">u[k] = ${bTerms.join(" + ")}${aTerms.length ? " − " + aTerms.join(" − ") : ""}</span></div>`;
+ let coeffGridHtml = `<div class="coeff-grid">${coeffCards.join("")}</div>`;
+
+ $("discCoeff").innerHTML = renderVerticalTF("G<sub>c</sub>(z)", nn, dd, "z", `Method: <b>${method}</b> · Sampling Period T<sub>s</sub> = ${(T*1e6).toFixed(3)} µs (f<sub>s</sub> = ${fmt(1/T/1000,2)} kHz)`) + diffEqHtml + coeffGridHtml;
+
+ $("digitalWarn").textContent=`Fs=${fmt(1/T/1000,2)} kHz; Nyquist=${fmt(1/(2*T)/1000,2)} kHz; extra delay=${num("delay")} sample(s). Verify closed-loop discrete margins with ZOH and PWM delay.`;
+ let b=bodeData(tf);
+ Plotly.newPlot("discPlot",[{x:b.f,y:b.mag,type:"scatter",mode:"lines",name:"Continuous controller",line:{color:"#179eae",width:2}}],{title:{text:"Controller Magnitude Response |Gc(jw)|",font:{color:"#0f4186",size:13}},paper_bgcolor:"#d9e1f2",plot_bgcolor:"#d9e1f2",font:{color:"#54624d"},margin:{l:50,r:20,t:40,b:40},xaxis:{type:"log",title:"Frequency (Hz)",gridcolor:"#c6d8b8"},yaxis:{title:"Magnitude (dB)",gridcolor:"#c6d8b8"}},{responsive:true,displaylogo:false});
+ cSource();
+ updateReport();
+}
+
+// Selected-Compensator Common Pointer-Driven Embedded C Implementation for 4 Loops:
+// (1) Buck Voltage Loop, (2) Buck Current Loop, (3) Boost Voltage Loop, (4) Boost Current Loop
+function cSource(){
+ if(!state.comp) calculateDesign(false);
+ if(!state.disc) discretize();
+ let {num:bn,den:ad}=state.disc;
+ let n=Math.max(0, Math.min(8, Math.max(bn.length,ad.length)-1));
+ let b=bn.slice(),a=ad.slice();
+ while(b.length<n+1)b.unshift(0);
+ while(a.length<n+1)a.unshift(0);
+
+ const typeTag = state.comp.type.toUpperCase(); // e.g., PI, TYPE2, TYPE3, LEAD, LAG, PID, P
+ const histLen = n + 1;
+
+ let actMaxDuty = num("dmax") > 0 ? num("dmax") : 0.95;
+ let voutRef = state.selected ? state.selected.Vo : 96.0;
+ let ioutRef = state.selected ? state.selected.IL : 6.25;
+ let iMaxLim = Math.max(10.0, ioutRef * 2.0);
+
+ let bInitList = b.map(x=>`${x.toExponential(8)}f`).join(", ");
+ let aInitList = a.map(x=>`${x.toExponential(8)}f`).join(", ");
+
+ // Generate exact pointer-walk shift and MAC code for the selected compensator's order n
+ let shiftAndMacBlock = "";
+ if (n > 0) {
+   shiftAndMacBlock = `  /* Reverse pointer-walk delay-line shift: x[i] <- x[i-1], y[i] <- y[i-1] */
+  float32_t * restrict p_x_shift = &p_ctx->x_history[${typeTag}_COMP_ORDER];
+  float32_t * restrict p_y_shift = &p_ctx->y_history[${typeTag}_COMP_ORDER];
+  for (uint8_t k = ${typeTag}_COMP_ORDER; k > 0U; --k) {
+    *p_x_shift = *(p_x_shift - 1);
+    *p_y_shift = *(p_y_shift - 1);
+    --p_x_shift;
+    --p_y_shift;
+  }
+  *p_x_shift = err_now; /* x_history[0] = e[k] */
+
+  /* Forward pointer-walk Multiply-Accumulate (MAC) for ${typeTag} (Order = ${n}) */
+  const float32_t * restrict p_b_coeff = &p_ctx->b_num_coeffs[0];
+  const float32_t * restrict p_a_coeff = &p_ctx->a_den_coeffs[1];
+  const float32_t * restrict p_x_mac   = &p_ctx->x_history[0];
+  const float32_t * restrict p_y_mac   = &p_ctx->y_history[1];
+
+  float32_t raw_recursive_output_accum = (*p_b_coeff++) * (*p_x_mac++);
+  for (uint8_t i = ${typeTag}_COMP_ORDER; i > 0U; --i) {
+    raw_recursive_output_accum += ((*p_b_coeff++) * (*p_x_mac++))
+                                - ((*p_a_coeff++) * (*p_y_mac++));
+  }
+  raw_recursive_output_accum *= p_ctx->inv_a0_norm_scale;`;
+ } else {
+   shiftAndMacBlock = `  /* Order 0 (${typeTag}) direct pointer evaluation */
+  p_ctx->x_history[0] = err_now;
+  const float32_t raw_recursive_output_accum =
+      (p_ctx->b_num_coeffs[0] * err_now) * p_ctx->inv_a0_norm_scale;`;
+ }
+
+ let code=`/* ============================================================================
+ * DEDICATED ${typeTag} COMPENSATOR — MULTI-LOOP POINTER-DRIVEN C ENGINE
+ * Target MCU             : ${$("mcu").value}
+ * Selected Compensator   : ${typeTag} Only (Order N = ${n}, History Length = ${histLen})
+ * Discretization Method  : ${state.disc.method.toUpperCase()} (Ts = ${(state.disc.T*1e6).toFixed(3)} us)
+ * Shared Across 4 Loops  : [0] Buck Voltage Loop   [1] Buck Current Loop
+ *                          [2] Boost Voltage Loop  [3] Boost Current Loop
+ * Saturation Scheme      : Internal state bipolar clamp [-max, +max] +
+ *                          Final actuator output unipolar clamp [0.0f, +max]
+ * ============================================================================ */
+#include <stdint.h>
+#include <stddef.h>
+#include <math.h>
+
+typedef float float32_t;
+
+#define ${typeTag}_COMP_ORDER       (${n}U)
+#define ${typeTag}_HIST_BUFFER_LEN  (${histLen}U)
+
+/* 4-Channel Converter & Control-Mode Loop Selector Enumeration */
+typedef enum {
+  CONV_BUCK_VOLTAGE_LOOP  = 0x00U, /* Buck Outer Voltage-Mode Compensator Loop  */
+  CONV_BUCK_CURRENT_LOOP  = 0x01U, /* Buck Inner Current-Mode Compensator Loop  */
+  CONV_BOOST_VOLTAGE_LOOP = 0x02U, /* Boost Outer Voltage-Mode Compensator Loop */
+  CONV_BOOST_CURRENT_LOOP = 0x03U, /* Boost Inner Current-Mode Compensator Loop */
+  CONV_TOTAL_LOOP_COUNT   = 0x04U
+} Conv_Loop_Id_e;
+
+/* Branchless ternary saturation macro */
+#define ${typeTag}_CLAMP(val, lo, hi)  (((val) > (hi)) ? (hi) : (((val) < (lo)) ? (lo) : (val)))
+
+/* Common ${typeTag} Compensator Context Structure (Reused across all 4 Buck/Boost Loops) */
+typedef struct ${typeTag}_Compensator_Ctx_s {
+  /* Loop Reference, Feedback & Error Signals */
+  float32_t reference_setpoint;                        /* Target reference (Vref [V] or Iref [A])        */
+  float32_t feedback_measurement;                      /* Sensed plant feedback (Vout or IL)             */
+  float32_t error_signal;                              /* Current error: e[k] = reference - feedback     */
+
+  /* ${typeTag} Delay-Line State History Arrays (Exact Order N = ${n}) */
+  float32_t x_history[${typeTag}_HIST_BUFFER_LEN];     /* Error history: e[k ... k-${n}]                 */
+  float32_t y_history[${typeTag}_HIST_BUFFER_LEN];     /* Internal output history: y_int[k ... k-${n}]   */
+
+  /* ${typeTag} Discrete Z-Domain Coefficients */
+  float32_t b_num_coeffs[${typeTag}_HIST_BUFFER_LEN];  /* Feed-forward numerator gains: b0 ... b${n}     */
+  float32_t a_den_coeffs[${typeTag}_HIST_BUFFER_LEN];  /* Recursive denominator gains:  a0 ... a${n}     */
+  float32_t inv_a0_norm_scale;                         /* Precomputed 1.0f / a0 normalization factor     */
+
+  /* Bipolar Internal State Clamping & Unipolar Final Output Saturation Limits */
+  float32_t internal_state_sat_min;                    /* Bipolar negative internal clamp (-max_limit)   */
+  float32_t internal_state_sat_max;                    /* Bipolar positive internal clamp (+max_limit)   */
+  float32_t actuator_output_sat_min;                   /* Final minimum actuator output limit (0.0f)     */
+  float32_t actuator_output_sat_max;                   /* Final maximum actuator output limit (+max)     */
+
+  /* Descriptive Output Variables */
+  float32_t comp_unclamped_internal_output;            /* Bipolar-clamped internal recursive state       */
+  float32_t comp_clamped_actuator_output;              /* Final unipolar-clamped actuator output [0,max] */
+
+  /* Assigned Converter Loop Identifier */
+  Conv_Loop_Id_e assigned_loop_id;
+} ${typeTag}_Compensator_Ctx_t;
+
+/* Synthesized ${typeTag} Discrete Coefficients from Active Lab Design */
+static const float32_t g_${typeTag}_Synthesized_B_Coeffs[${typeTag}_HIST_BUFFER_LEN] = {
+  ${bInitList}
+};
+static const float32_t g_${typeTag}_Synthesized_A_Coeffs[${typeTag}_HIST_BUFFER_LEN] = {
+  ${aInitList}
+};
+
+/* 4 Dedicated ${typeTag} Compensator Instances for Buck & Boost (Voltage & Current Modes) */
+static ${typeTag}_Compensator_Ctx_t g_Buck_Voltage_${typeTag}_Ctx;
+static ${typeTag}_Compensator_Ctx_t g_Buck_Current_${typeTag}_Ctx;
+static ${typeTag}_Compensator_Ctx_t g_Boost_Voltage_${typeTag}_Ctx;
+static ${typeTag}_Compensator_Ctx_t g_Boost_Current_${typeTag}_Ctx;
+
+/* Master Pointer Dispatch Table Mapping Conv_Loop_Id_e -> Instance Address */
+static ${typeTag}_Compensator_Ctx_t * const g_${typeTag}_LoopPtr_Table[CONV_TOTAL_LOOP_COUNT] = {
+  &g_Buck_Voltage_${typeTag}_Ctx,   /* [0] CONV_BUCK_VOLTAGE_LOOP  */
+  &g_Buck_Current_${typeTag}_Ctx,   /* [1] CONV_BUCK_CURRENT_LOOP  */
+  &g_Boost_Voltage_${typeTag}_Ctx,  /* [2] CONV_BOOST_VOLTAGE_LOOP */
+  &g_Boost_Current_${typeTag}_Ctx   /* [3] CONV_BOOST_CURRENT_LOOP */
+};
+
+/* ============================================================================
+ * 1. COMMON ${typeTag} COEFFICIENT & SATURATION ASSIGNMENT FUNCTION
+ *    Configures any of the 4 Buck/Boost Voltage/Current loop instances via
+ *    restrict pointers, setting b_num_coeffs[], a_den_coeffs[], bipolar
+ *    internal state limits [-max, +max], and unipolar output limits [0.0f, +max].
+ * ============================================================================ */
+void ${typeTag}_Compensator_AssignConfig(
+    const Conv_Loop_Id_e            loop_select_id,
+    const float32_t * const restrict p_b_src,
+    const float32_t * const restrict p_a_src,
+    const float32_t                 initial_reference,
+    const float32_t                 max_actuator_limit)
+{
+  if (((uint32_t)loop_select_id >= (uint32_t)CONV_TOTAL_LOOP_COUNT) ||
+      (p_b_src == NULL) || (p_a_src == NULL)) {
+    return;
+  }
+
+  /* Resolve target loop context pointer via pointer-table offset dereference */
+  ${typeTag}_Compensator_Ctx_t * const restrict p_ctx =
+      *(&g_${typeTag}_LoopPtr_Table[0] + (uint32_t)loop_select_id);
+
+  float32_t       * restrict p_x  = &p_ctx->x_history[0];
+  float32_t       * restrict p_y  = &p_ctx->y_history[0];
+  float32_t       * restrict p_b  = &p_ctx->b_num_coeffs[0];
+  float32_t       * restrict p_a  = &p_ctx->a_den_coeffs[0];
+  const float32_t * restrict p_bs = p_b_src;
+  const float32_t * restrict p_as = p_a_src;
+
+  for (uint8_t idx = ${typeTag}_HIST_BUFFER_LEN; idx > 0U; --idx) {
+    *p_x++ = 0.0f;
+    *p_y++ = 0.0f;
+    *p_b++ = *p_bs++;
+    *p_a++ = *p_as++;
+  }
+
+  const float32_t a0_val    = p_ctx->a_den_coeffs[0];
+  p_ctx->inv_a0_norm_scale  = (fabsf(a0_val) > 1.0e-20f) ? (1.0f / a0_val) : 1.0f;
+  p_ctx->assigned_loop_id   = loop_select_id;
+
+  p_ctx->reference_setpoint             = initial_reference;
+  p_ctx->feedback_measurement           = 0.0f;
+  p_ctx->error_signal                   = 0.0f;
+  p_ctx->comp_unclamped_internal_output = 0.0f;
+  p_ctx->comp_clamped_actuator_output   = 0.0f;
+
+  /* Bipolar internal state limits [-max, +max] & Unipolar actuator limits [0.0f, +max] */
+  const float32_t pos_lim         = fabsf(max_actuator_limit);
+  p_ctx->internal_state_sat_max   =  pos_lim;
+  p_ctx->internal_state_sat_min   = -pos_lim;
+  p_ctx->actuator_output_sat_max  =  pos_lim;
+  p_ctx->actuator_output_sat_min  =  0.0f;
+}
+
+/* ============================================================================
+ * 2. COMMON ${typeTag} POINTER-DRIVEN EXECUTION FUNCTION
+ *    Shared across all 4 loops (Buck Voltage, Buck Current, Boost Voltage,
+ *    Boost Current). Pass the loop_select_id (or context pointer) to execute.
+ * ============================================================================ */
+float32_t ${typeTag}_Compensator_Execute_PtrEngine(
+    const Conv_Loop_Id_e loop_select_id,
+    const float32_t      reference_in,
+    const float32_t      feedback_in)
+{
+  /* O(1) pointer-table resolution for the selected Buck/Boost Voltage/Current loop */
+  ${typeTag}_Compensator_Ctx_t * const restrict p_ctx =
+      *(&g_${typeTag}_LoopPtr_Table[0] + ((uint32_t)loop_select_id & 0x03U));
+
+  p_ctx->reference_setpoint   = reference_in;
+  p_ctx->feedback_measurement = feedback_in;
+  const float32_t err_now     = reference_in - feedback_in;
+  p_ctx->error_signal         = err_now;
+
+${shiftAndMacBlock}
+
+  /* 1) Internal Bipolar State Saturation [-max to +max] to prevent integrator/state windup */
+  const float32_t bipolar_saturated_internal_output = ${typeTag}_CLAMP(
+      raw_recursive_output_accum,
+      p_ctx->internal_state_sat_min,
+      p_ctx->internal_state_sat_max
+  );
+
+  p_ctx->y_history[0]                   = bipolar_saturated_internal_output;
+  p_ctx->comp_unclamped_internal_output = bipolar_saturated_internal_output;
+
+  /* 2) Final Unipolar Actuator Output Saturation [0.0f to +max] */
+  const float32_t unipolar_clamped_actuator_output = ${typeTag}_CLAMP(
+      bipolar_saturated_internal_output,
+      p_ctx->actuator_output_sat_min,
+      p_ctx->actuator_output_sat_max
+  );
+
+  p_ctx->comp_clamped_actuator_output = unipolar_clamped_actuator_output;
+  return unipolar_clamped_actuator_output;
+}
+
+/* ============================================================================
+ * 3. INITIALIZATION & ISR USAGE FOR ALL 4 BUCK & BOOST LOOPS USING ${typeTag}
+ * ============================================================================ */
+void System_${typeTag}_Compensators_InitAll(void)
+{
+  /* [0] Buck Voltage-Mode Loop */
+  ${typeTag}_Compensator_AssignConfig(
+      CONV_BUCK_VOLTAGE_LOOP,
+      g_${typeTag}_Synthesized_B_Coeffs, g_${typeTag}_Synthesized_A_Coeffs,
+      ${voutRef.toFixed(2)}f, ${iMaxLim.toFixed(4)}f);
+
+  /* [1] Buck Current-Mode Loop */
+  ${typeTag}_Compensator_AssignConfig(
+      CONV_BUCK_CURRENT_LOOP,
+      g_${typeTag}_Synthesized_B_Coeffs, g_${typeTag}_Synthesized_A_Coeffs,
+      ${ioutRef.toFixed(4)}f, ${actMaxDuty.toFixed(4)}f);
+
+  /* [2] Boost Voltage-Mode Loop */
+  ${typeTag}_Compensator_AssignConfig(
+      CONV_BOOST_VOLTAGE_LOOP,
+      g_${typeTag}_Synthesized_B_Coeffs, g_${typeTag}_Synthesized_A_Coeffs,
+      ${voutRef.toFixed(2)}f, ${iMaxLim.toFixed(4)}f);
+
+  /* [3] Boost Current-Mode Loop */
+  ${typeTag}_Compensator_AssignConfig(
+      CONV_BOOST_CURRENT_LOOP,
+      g_${typeTag}_Synthesized_B_Coeffs, g_${typeTag}_Synthesized_A_Coeffs,
+      ${ioutRef.toFixed(4)}f, ${actMaxDuty.toFixed(4)}f);
+}
+
+void PowerStage_${typeTag}_Control_ISR(
+    const float32_t buck_vout_fdbk,  const float32_t buck_il_fdbk,
+    const float32_t boost_vout_fdbk, const float32_t boost_il_fdbk,
+    float32_t * const restrict p_buck_pwm_duty_output,
+    float32_t * const restrict p_boost_pwm_duty_output)
+{
+  /* --- BUCK CONVERTER: Voltage Loop -> Current Loop -> Buck PWM Duty Output --- */
+  const float32_t buck_current_ref_command = ${typeTag}_Compensator_Execute_PtrEngine(
+      CONV_BUCK_VOLTAGE_LOOP,
+      g_Buck_Voltage_${typeTag}_Ctx.reference_setpoint,
+      buck_vout_fdbk
+  );
+  *p_buck_pwm_duty_output = ${typeTag}_Compensator_Execute_PtrEngine(
+      CONV_BUCK_CURRENT_LOOP,
+      buck_current_ref_command,
+      buck_il_fdbk
+  );
+
+  /* --- BOOST CONVERTER: Voltage Loop -> Current Loop -> Boost PWM Duty Output --- */
+  const float32_t boost_current_ref_command = ${typeTag}_Compensator_Execute_PtrEngine(
+      CONV_BOOST_VOLTAGE_LOOP,
+      g_Boost_Voltage_${typeTag}_Ctx.reference_setpoint,
+      boost_vout_fdbk
+  );
+  *p_boost_pwm_duty_output = ${typeTag}_Compensator_Execute_PtrEngine(
+      CONV_BOOST_CURRENT_LOOP,
+      boost_current_ref_command,
+      boost_il_fdbk
+  );
+}
+`;
+ $("cCode").textContent=code;
+ return code;
+}
+
+function updatePlantTab(m){
+ const arch = $("arch").value;
+ const allowedKeys = (ARCH_PLANTS[arch] || ARCH_PLANTS.vmode).map(o=>o.value);
+ let key=$("plant").value,tf=selectedPlant(m);
+ $("plantEq").innerHTML = renderVerticalTF(plantName(key), tf.num, tf.den, "s");
+ $("plantMeta").textContent=`Numerator coefficients: ${coeffText(tf.num)}; denominator: ${coeffText(tf.den)}. Includes Rl = ${fmt(m.Rl*1e3,1)} mΩ and Rc = ${fmt(m.Rc*1e3,1)} mΩ.`;
+ let tbody="";
+ allowedKeys.forEach(k=>{
+   let t=m.models[k];
+   let desc = k==="vd" ? "output voltage / duty (Direct VMC)" :
+              k==="id" ? "inductor current / duty (ACMC / Inner Loop)" :
+              k==="vg" ? "output / input voltage audio susceptibility F(s)" :
+              k==="load" ? "output impedance load disturbance Zo(s)" :
+              "outer voltage / inductor current Gvi(s) (with inner current loop = 1)";
+   tbody+=`<tr><td><b>${plantName(k)}</b></td><td>${desc}</td><td>${coeffText(t.num)}</td><td>${coeffText(t.den)}</td></tr>`;
+ });
+ $("plantTable").innerHTML=tbody;
+ renderBode("plantBode",tf,plantName(key));
+ renderPole("plantPole",tf);
+}
+
+function updateReport(){
+ if(!state.selected)return;
+ const m=state.selected;
+ let report=`UNIVERSAL POWER CONVERTER COMPENSATOR LAB — DESIGN REPORT\n\nTopology: ${m.top.toUpperCase()} | Architecture: ${$("arch").value}\nVin (Vg): ${m.Vin} V; |Vout|: ${m.Vo} V; Power P: ${m.P} W\nDerived Iin: ${fmt(m.Iin,4)} A; Derived Io: ${fmt(m.Io,4)} A; Derived Load R (Vo^2/P): ${fmt(m.R,4)} ohm\nL: ${m.L*1e6} uH (ESR Rl = ${m.Rl*1e3} mOhm); C: ${m.C*1e6} uF (ESR Rc = ${m.Rc*1e3} mOhm)\nDuty D: ${fmt(m.D,5)}; IL avg: ${fmt(m.IL,4)} A; f0: ${fmt(m.f0,2)} Hz (Q=${fmt(m.Qfactor,3)}); RHP zero: ${fmt(m.rhp,2)} Hz; ESR zero: ${fmt(m.fesr,2)} Hz\nSelected plant: ${$("plant").value} — ${plantName($("plant").value)}\n`;
+ if(state.comp){
+   const c = state.comp;
+   report+=`\nController type: ${c.type.toUpperCase()}; gain K=${c.K}; target frequency=${c.fc} Hz\nZeros: fz1=${c.fz1} Hz, fz2=${c.fz2} Hz | Poles: fp1=${c.fp1} Hz, fp2=${c.fp2} Hz\nCrossover: ${c.chosenCross?fmt(c.chosenCross.fc,2)+" Hz":"N/A"} | Phase Margin: ${c.chosenCross?fmt(c.chosenCross.pm,2)+" deg":"N/A"} | Gain Margin: ${c.chosenGm?fmt(c.chosenGm.gmDb,2)+" dB":"Inf"}\nGc numerator: ${JSON.stringify(c.tf.num)}\nGc denominator: ${JSON.stringify(c.tf.den)}\n`;
+ }
+ if(state.analog){
+   report+=`\nAnalog Op-Amp BOM (R1=${fmtResistor(state.analog.R1)}, Vref=${state.analog.Vref}V, Vp=${state.analog.Vp}V):\n` +
+     state.analog.bom.map(b=>`  - ${b.name}: Exact=${b.exact} | Standard=${b.std} (${b.role})`).join("\n") + "\n";
+ }
+ if(state.disc)report+=`\nDiscretization: ${state.disc.method}; Ts=${state.disc.T} s\nDiscrete numerator: ${JSON.stringify(state.disc.num)}\nDiscrete denominator: ${JSON.stringify(state.disc.den)}\n`;
+ $("reportText").value=report;
+}
+
+function recalc(showAlert=false){
+ try{
+   state.selected=plantModels();
+   let m=state.selected;
+   $("kDuty").textContent=fmt(m.D,4);
+   $("kIL").textContent=fmt(m.IL,3)+" A";
+   $("kF0").textContent=`${fmt(m.f0,1)} Hz (Q=${fmt(m.Qfactor,2)})`;
+   let rhpStr = Number.isFinite(m.rhp) ? `RHP: ${fmt(m.rhp,0)}Hz` : "No RHP";
+   let esrStr = Number.isFinite(m.fesr) ? `ESR: ${fmt(m.fesr,0)}Hz` : "Idl C";
+   $("kRhp").textContent = `${rhpStr} | ${esrStr}`;
+
+   const valid=m.D>num("dmin")&&m.D<num("dmax")&&m.D>0&&m.D<1;
+   let notes=[];
+   if(!valid)notes.push(`Duty ${fmt(m.D,4)} outside selected range [${num("dmin")}, ${num("dmax")}] or physical interval (0,1).`);
+   if(m.top==="boost"&&m.rhp<5*num("fc")&&$("plant").value!=="id")notes.push("Boost RHP zero is not at least 5× target crossover; reduce bandwidth or use inner current loop.");
+   if(num("fs")<=0||num("fsw")<=0)notes.push("Sampling and switching frequencies must be positive.");
+   {const dI=(m.top==="buck"?(m.Vin-m.Vo)*m.D:m.Vin*m.D)/(m.L*num("fsw")*1000);if(m.IL<dI/2)notes.push(`CCM assumption violated: ripple ΔIL = ${fmt(dI,3)} A (pk-pk) exceeds 2×IL,avg (${fmt(m.IL,3)} A) → DCM, so the CCM small-signal models are not valid. Increase L, Fsw or load.`)}
+   $("validation").className="status "+(notes.length?"error":"");
+   $("validation").textContent=notes.length?notes.join(" "):`Operating point calculated (with Rl=${fmt(m.Rl*1e3,1)} mΩ, Rc=${fmt(m.Rc*1e3,1)} mΩ): Io = ${fmt(m.Io,3)} A, Iin = ${fmt(m.Iin,3)} A, R = ${fmt(m.R,3)} Ω.`;
+   $("modelTag").textContent=valid?"model calculated":"check duty";
+   drawSchematic(m);
+   updatePlantTab(m);
+   calculateDesign(showAlert);
+   discretize();
+ }catch(e){
+   $("validation").className="status error";
+   $("validation").textContent=e.message;
+ }
+}
+
+function download(name,content,type="text/plain"){
+  let blob=new Blob([content],{type}),a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);
+}
+
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));
+  document.querySelectorAll(".tabcontent").forEach(x=>x.classList.toggle("active",x.id==="tab-"+b.dataset.tab));
+  if(window.Plotly)window.dispatchEvent(new Event("resize"));
+}));
+
+$("arch").onchange = ()=>{
+  updatePlantDropdownForArch();
+  if(state.selected){
+    updatePlantTab(state.selected);
+    calculateDesign(true);
+    discretize();
+  }
+};
+
+$("recalc").onclick=()=>recalc(true);
+$("reset").onclick=()=>{
+  Object.entries({topology:"boost",vin:48,vout:96,power:300,ind:220,cap:470,dcr:50,esr:30,fsw:50,fs:50,vramp:1.0,dmin:.02,dmax:.95,arch:"vmode",ctype:"type3",method:"bode",fc:800,pm:60,fz1:250,fz2:350,fp1:5000,fp2:8000,gain:1,sense:1,disc:"tustin",mcu:"TMS320F28375S",prewarp:800,delay:1,opR1:10,opVref:2.5}).forEach(([k,v])=>{if($(k))$(k).value=v});
+  updatePlantDropdownForArch();
+  $("plant").value="vd";
+  state.comp=null;state.disc=null;recalc(false);
+};
+$("design").onclick=()=>{try{if(!state.selected)recalc(true);else{calculateDesign(true);discretize();}}catch(e){$("validation").className="status error";$("validation").textContent=e.message}};
+$("discretize").onclick=()=>{try{discretize()}catch(e){$("digitalWarn").textContent=e.message}};
+$("generateC").onclick=()=>{try{download("compensator_generated.c",cSource(),"text/x-c")}catch(e){$("cCode").textContent=e.message}};
+$("plant").onchange=()=>{
+  updatePlantHintText();
+  if(state.selected){updatePlantTab(state.selected);calculateDesign(true);discretize();}
+};
+$("topology").onchange=()=>recalc(true);
+
+["fc","pm","ctype","method","sense","vramp","ibw","dly","delay"].forEach(id=>{
+  $(id).addEventListener("change", ()=>{
+    try{
+      if(!state.selected) state.selected = plantModels();
+      calculateDesign(true);
+      discretize();
+    }catch(e){}
+  });
+});
+
+["opR1","opVref"].forEach(id=>{
+  $(id).addEventListener("change", ()=>{
+    try{ updateAnalogHardwareTab(); updateReport(); }catch(e){}
+  });
+});
+
+["fz1","fz2","fp1","fp2","gain"].forEach(id=>{
+  $(id).addEventListener("change", ()=>{
+    try{
+      if($("method").value !== "manual") $("method").value = "manual";
+      calculateDesign(false);
+      discretize();
+    }catch(e){}
+  });
+});
+
+$("exportJson").onclick=()=>{
+  let obj={inputs:Object.fromEntries(["topology","vin","vout","power","load","iin","iout","ind","cap","dcr","esr","fsw","fs","vramp","dmin","dmax","arch","plant","ctype","method","fc","pm","fz1","fz2","fp1","fp2","gain","sense","disc","mcu","prewarp","delay","opR1","opVref"].map(k=>[k,$(k).value])),model:state.selected,compensator:state.comp,analog:state.analog,discrete:state.disc};
+  download("converter_compensator_project.json",JSON.stringify(obj,null,2),"application/json");
+};
+$("save").onclick=()=>{
+  localStorage.setItem("universalCompLab",JSON.stringify(Object.fromEntries(Array.from(document.querySelectorAll("input,select")).map(x=>[x.id,x.value]))));
+  $("validation").textContent="Current input configuration saved in this browser.";
+};
+$("loadSaved").onclick=()=>{
+  let s=localStorage.getItem("universalCompLab");
+  if(!s){$("validation").textContent="No saved configuration in this browser.";return}
+  const parsed = JSON.parse(s);
+  if(parsed.arch && $("arch")) $("arch").value = parsed.arch;
+  updatePlantDropdownForArch();
+  Object.entries(parsed).forEach(([k,v])=>{if($(k))$(k).value=v});
+  recalc(false);
+};
+$("downloadReport").onclick=()=>download("converter_design_report.txt",$("reportText").value);
+$("downloadCsv").onclick=()=>{
+  if(!state.selected)recalc(false);
+  let b=bodeData(selectedPlant(state.selected));
+  let csv="frequency_Hz,magnitude_dB,phase_deg\n"+b.f.map((f,i)=>`${f},${b.mag[i]},${b.ph[i]}`).join("\n");
+  download("plant_bode.csv",csv,"text/csv");
+};
+
+["vin","vout","power","ind","cap","dcr","esr","fsw","fs","dmin","dmax"].forEach(k=>$(k).addEventListener("input",()=>{
+  updateConverterDerivedInputs();
+}));
+["vin","vout","power","ind","cap","dcr","esr","fsw","fs","dmin","dmax"].forEach(k=>$(k).addEventListener("change",()=>{
+  recalc(true);
+}));
+
+updatePlantDropdownForArch();
+recalc(false);
+</script>
+</body></html>

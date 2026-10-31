@@ -54,7 +54,7 @@ styles.css
 app.js
 config.js
 config.example.js
-assets/kt-logo.jpg
+assets/T&K Logo.jpg
 tools/compensator-lab.html
 supabase/schema.sql
 README.md
